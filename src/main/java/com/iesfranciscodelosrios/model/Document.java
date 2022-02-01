@@ -38,7 +38,7 @@ public class Document implements Serializable{
 	@Column(name="isVertical")
 	private boolean isVertical; //Layout of the sheet. No price. True vertical, false horizontal
 	@Column(name="ringedPosition") 
-	private String ringedPosition; //Layout of the ringed.
+	private boolean ringedPosition; //Layout of the ringed. True vertical, false horizontal
 	
 	@Column(name="comment")
 	private String comment;
@@ -51,7 +51,7 @@ public class Document implements Serializable{
 	}
 
 	public Document(int nCopies, Color isColor, Size size, PaperThickness thickness, String impressionType,
-			Ended finishType, String impressionPerSide, boolean isVertical, String ringedPosition, String comment,
+			Ended finishType, String impressionPerSide, boolean isVertical, boolean ringedPosition, String comment,
 			String url) {
 		super();
 		this.id=-1L;
@@ -69,7 +69,7 @@ public class Document implements Serializable{
 	}
 	
 	public Document(int nCopies, Color isColor, Size size, PaperThickness thickness, String impressionType,
-			Ended finishType, String impressionPerSide, boolean isVertical, String ringedPosition, String comment) {
+			Ended finishType, String impressionPerSide, boolean isVertical, boolean ringedPosition, String comment) {
 		super();
 		this.id=-1L;
 		this.nCopies = nCopies;
@@ -85,7 +85,7 @@ public class Document implements Serializable{
 	}
 	
 	public Document(int nCopies, Color isColor, Size size, PaperThickness thickness, String impressionType,
-			Ended finishType, String impressionPerSide, boolean isVertical, String ringedPosition) {
+			Ended finishType, String impressionPerSide, boolean isVertical, boolean ringedPosition) {
 		super();
 		this.id=-1L;
 		this.nCopies = nCopies;
@@ -196,11 +196,11 @@ public class Document implements Serializable{
 		this.isVertical = isVertical;
 	}
 
-	public String getRingedPosition() {
+	public boolean getRingedPosition() {
 		return ringedPosition;
 	}
 
-	public void setRingedPosition(String ringedPosition) {
+	public void setRingedPosition(boolean ringedPosition) {
 		this.ringedPosition = ringedPosition;
 	}
 
@@ -220,5 +220,11 @@ public class Document implements Serializable{
 		this.url = url;
 	}
 
-	
+	@Override
+	public String toString() {
+		return "Document [id=" + id + ", nCopies=" + nCopies + ", isColor=" + isColor + ", size=" + size
+				+ ", thickness=" + thickness + ", impressionType=" + impressionType + ", finishType=" + finishType
+				+ ", impressionPerSide=" + impressionPerSide + ", isVertical=" + isVertical + ", ringedPosition="
+				+ ringedPosition + ", comment=" + comment + ", url=" + url + "]";
+	}
 }
