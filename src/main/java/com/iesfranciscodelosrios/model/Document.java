@@ -1,6 +1,21 @@
 package com.iesfranciscodelosrios.model;
 
-public class Document {
+import java.io.Serial;
+import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name="Document")
+public class Document implements Serializable{
+	@Serial
+	private static final long serialVersionUID = 1L;
+
 	private enum impressionsTypes {
 		normal(1),
 		twopages(2),
@@ -18,28 +33,53 @@ public class Document {
         }
     }
 	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name="id")
 	private Long id;
 	
+	@Column(name="id")
 	private int nCopies;
+	@Column(name="color")
 	private String color;
+	@Column(name="size")
 	private String size;
+	@Column(name="thickness")
 	private int thickness;
+	@Column(name="impressionType")
 	private String impressionType;
+	@Column(name="finishType")
 	private String finishType;
+	@Column(name="impressionPerSide")
 	private impressionsTypes impressionPerSide;
+	@Column(name="orientation")
 	private String orientation;
+	@Column(name="ringedPosition")
 	private String ringedPosition;
 	
+	@Column(name="copyPrice")
 	private float copyPrice;
+	@Column(name="colorPrice")
 	private float colorPrice;
+	@Column(name="sizePrice")
 	private float sizePrice;
+	@Column(name="thicknessPrice")
 	private float thicknessPrice;
+	@Column(name="impressionTypePrice")
 	private float impressionTypePrice;
+	@Column(name="finishTypePrice")
 	private float finishTypePrice;
+	@Column(name="impressionPerSidePrice")
 	private float impressionPerSidePrice;
+	@Column(name="ringedPositioinPrice")
 	private float ringedPositionPrice;
 	
+	@Column(name="comment")
 	private String comment;
+	
+	public Document() {
+		this.id=-1L;
+	}
 
 	public Document(int nCopies, String color, String size, int thickness, String impressionType,
 			String finishType, int impressionPerSide, String orientation, String ringedPosition, String comment) {
@@ -51,7 +91,7 @@ public class Document {
 		this.thickness = thickness;
 		this.impressionType = impressionType;
 		this.finishType = finishType;
-		this.impressionPerSide.icode=impressionPerSide;
+		this.impressionPerSide=impressionsTypes.values()[impressionPerSide];
 		this.orientation = orientation;
 		this.ringedPosition = ringedPosition;
 		this.comment = comment;
