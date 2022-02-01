@@ -3,6 +3,7 @@ package com.iesfranciscodelosrios.model;
 import javax.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Objects;
 
 @Entity
 @Table(name="Discount")
@@ -29,8 +30,8 @@ public class Discount implements Serializable {
         this.id = -1L;
     }
 
-    public Discount(Long id, String name, Integer percentage, Integer fixedValue, boolean isFixed) {
-        this.id = id;
+    public Discount(String name, Integer percentage, Integer fixedValue, boolean isFixed) {
+        this.id = -1L;
         this.name = name;
         this.percentage = percentage;
         this.fixedValue = fixedValue;
@@ -77,4 +78,16 @@ public class Discount implements Serializable {
         isFixed = fixed;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Discount discount = (Discount) o;
+        return Objects.equals(id, discount.id);
+    }
+
+    @Override
+    public String toString() {
+        return "Discount{" + "id=" + id + ", name='" + name + '\'' + ", percentage=" + percentage + ", fixedValue=" + fixedValue + ", isFixed=" + isFixed + '}';
+    }
 }
