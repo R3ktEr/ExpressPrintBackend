@@ -1,5 +1,6 @@
 package com.iesfranciscodelosrios.model;
 
+import java.io.Serial;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,9 +12,9 @@ import javax.persistence.Table;
 @Entity
 @Table(name="PaperThicknessPrice")
 
-public class PaperThicknessPrice {
+public class PaperThicknessPrice implements Serializable {
 
-
+	@Serial
 	private static final long serialVersionUID=1L;
 	
 	@Id
@@ -37,6 +38,12 @@ public class PaperThicknessPrice {
 		this.price = price;
 		this.description = description;
 		this.valid = valid;
+	}
+
+	 
+	public PaperThicknessPrice() {
+		super();
+		this.id=-1L;
 	}
 
 
@@ -84,6 +91,33 @@ public class PaperThicknessPrice {
 	public String toString() {
 		return "PaperThicknessPrice [id=" + id + ", price=" + price + ", description=" + description + ", valid="
 				+ valid + "]";
+	}
+
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		PaperThicknessPrice other = (PaperThicknessPrice) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
 	}
 	 
 	 
