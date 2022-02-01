@@ -10,6 +10,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.iesfranciscodelosrios.model.price.Color;
+import com.iesfranciscodelosrios.model.price.Ended;
+import com.iesfranciscodelosrios.model.price.Size;
+import com.iesfranciscodelosrios.model.price.Thickness;
+
 @Entity
 @Table(name="Document")
 public class Document implements Serializable{
@@ -28,7 +33,7 @@ public class Document implements Serializable{
 	@Column(name="size") 
 	private Size size; //Size of the paper
 	@Column(name="thickness")
-	private PaperThickness thickness; //Thickness of the paper
+	private Thickness thickness; //Thickness of the paper
 	@Column(name="impressionType")
 	private String impressionType; //One or two sides
 	@Column(name="finishType") 
@@ -50,7 +55,7 @@ public class Document implements Serializable{
 		this.id=-1L;
 	}
 
-	public Document(int nCopies, Color isColor, Size size, PaperThickness thickness, String impressionType,
+	public Document(int nCopies, Color isColor, Size size, Thickness thickness, String impressionType,
 			Ended finishType, String impressionPerSide, boolean isVertical, boolean ringedPosition, String comment,
 			String url) {
 		super();
@@ -68,7 +73,7 @@ public class Document implements Serializable{
 		this.url = url;
 	}
 	
-	public Document(int nCopies, Color isColor, Size size, PaperThickness thickness, String impressionType,
+	public Document(int nCopies, Color isColor, Size size, Thickness thickness, String impressionType,
 			Ended finishType, String impressionPerSide, boolean isVertical, boolean ringedPosition, String comment) {
 		super();
 		this.id=-1L;
@@ -84,7 +89,7 @@ public class Document implements Serializable{
 		this.comment = comment;
 	}
 	
-	public Document(int nCopies, Color isColor, Size size, PaperThickness thickness, String impressionType,
+	public Document(int nCopies, Color isColor, Size size, Thickness thickness, String impressionType,
 			Ended finishType, String impressionPerSide, boolean isVertical, boolean ringedPosition) {
 		super();
 		this.id=-1L;
@@ -156,11 +161,11 @@ public class Document implements Serializable{
 		this.size = size;
 	}
 
-	public PaperThickness getThickness() {
+	public Thickness getThickness() {
 		return thickness;
 	}
 
-	public void setThickness(PaperThickness thickness) {
+	public void setThickness(Thickness thickness) {
 		this.thickness = thickness;
 	}
 
