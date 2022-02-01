@@ -10,23 +10,23 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "EndedPrice")
-public class EndedPrice implements Serializable{
-	private static final long serialVersionUID = 1L;
+@Table(name = "SizePrice")
+public class Size implements Serializable {
 	
+	private static final long serialVersionUID = 1L;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	protected Long id;
-	@Column(name = "price")
+	@Column(name="price")
 	protected float price;
-	@Column(name = "description")
+	@Column(name="description")
 	protected String description;
-	@Column(name = "valid")
+	@Column(name="valid")
 	protected boolean valid;
 
-	public EndedPrice(Long id, float price, String description, boolean valid) {
+	public Size(Long id, float price, String description, boolean valid) {
 		super();
 		this.id = id;
 		this.price = price;
@@ -34,14 +34,14 @@ public class EndedPrice implements Serializable{
 		this.valid = valid;
 	}
 
-	public EndedPrice(float price, String description, boolean valid) {
+	public Size(float price, String description, boolean valid) {
 		super();
 		this.price = price;
 		this.description = description;
 		this.valid = valid;
 	}
 
-	public EndedPrice() {
+	public Size() {
 		super();
 	}
 
@@ -82,4 +82,5 @@ public class EndedPrice implements Serializable{
 		return "SizePrice [id=" + id + ", price=" + price + ", description=" + description + ", valid=" + valid
 				+ "]";
 	}
+
 }

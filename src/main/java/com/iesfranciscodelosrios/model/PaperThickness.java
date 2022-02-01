@@ -11,8 +11,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="PaperThicknessPrice")
-
-public class PaperThicknessPrice implements Serializable {
+public class PaperThickness implements Serializable{
 
 	@Serial
 	private static final long serialVersionUID=1L;
@@ -32,7 +31,7 @@ public class PaperThicknessPrice implements Serializable {
 	private boolean valid;
 	
 	
-	 public PaperThicknessPrice(Float price, String description, boolean valid) {
+	 public PaperThickness(Float price, String description, boolean valid) {
 		super();
 		this.id = -1L;
 		this.price = price;
@@ -41,7 +40,7 @@ public class PaperThicknessPrice implements Serializable {
 	}
 
 	 
-	public PaperThicknessPrice() {
+	public PaperThickness() {
 		super();
 		this.id=-1L;
 	}
@@ -111,7 +110,7 @@ public class PaperThicknessPrice implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		PaperThicknessPrice other = (PaperThicknessPrice) obj;
+		PaperThickness other = (PaperThickness) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;

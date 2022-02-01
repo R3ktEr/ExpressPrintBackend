@@ -1,7 +1,5 @@
 package com.iesfranciscodelosrios.model;
 
-
-
 import java.io.Serial;
 import java.io.Serializable;
 
@@ -14,7 +12,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="ColorPrice")
-public class ColorPrice implements Serializable{
+public class Color implements Serializable{
 	
 	@Serial
 	private static final long serialVersionUID=1L;
@@ -33,7 +31,7 @@ public class ColorPrice implements Serializable{
 	@Column(name="valid")
 	private boolean valid;
 
-	public ColorPrice(Float price, String description, boolean valid) {
+	public Color(Float price, String description, boolean valid) {
 		super();
 		this.id = -1L;
 		this.price = price;
@@ -41,14 +39,10 @@ public class ColorPrice implements Serializable{
 		this.valid = valid;
 	}
 
-	
-	
-	public ColorPrice() {
+	public Color() {
 		super();
 		this.id=-1L;
 	}
-
-
 
 	public Long getId() {
 		return id;
@@ -83,21 +77,12 @@ public class ColorPrice implements Serializable{
 	}
 
 	@Override
-	public String toString() {
-		return "ColorPrice [id=" + id + ", price=" + price + ", description=" + description + ", valid=" + valid + "]";
-	}
-
-
-
-	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
-
-
 
 	@Override
 	public boolean equals(Object obj) {
@@ -107,7 +92,7 @@ public class ColorPrice implements Serializable{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ColorPrice other = (ColorPrice) obj;
+		Color other = (Color) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
@@ -116,7 +101,8 @@ public class ColorPrice implements Serializable{
 		return true;
 	}
 	
-	
-	
-	
+	@Override
+	public String toString() {
+		return "ColorPrice [id=" + id + ", price=" + price + ", description=" + description + ", valid=" + valid + "]";
+	}
 }

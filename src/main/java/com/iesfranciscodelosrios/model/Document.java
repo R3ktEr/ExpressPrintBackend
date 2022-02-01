@@ -1,74 +1,101 @@
 package com.iesfranciscodelosrios.model;
 
-public class Document {
-	private enum impressionsTypes {
-		normal(1),
-		twopages(2),
-		twoslides(3),
-		fourslides(4);
-		
-        private int icode;
+import java.io.Serial;
+import java.io.Serializable;
 
-        impressionsTypes(int icode) {
-            this.icode = icode;
-        }
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
-        public int getICode() {
-            return this.icode;
-        }
-    }
+@Entity
+@Table(name="Document")
+public class Document implements Serializable{
+	@Serial
+	private static final long serialVersionUID = 1L;
 	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name="id")
 	private Long id;
 	
-	private int nCopies;
-	private String color;
-	private String size;
-	private int thickness;
-	private String impressionType;
-	private String finishType;
-	private impressionsTypes impressionPerSide;
-	private String orientation;
-	private String ringedPosition;
+	@Column(name="copies")
+	private int nCopies; //Number of copies
+	@Column(name="color")
+	private Color isColor; //Color of the document. true color; false black and white;
+	@Column(name="size") 
+	private Size size; //Size of the paper
+	@Column(name="thickness")
+	private PaperThickness thickness; //Thickness of the paper
+	@Column(name="impressionType")
+	private String impressionType; //One or two sides
+	@Column(name="finishType") 
+	private Ended finishType; //How the sheets will be arranged. Saddle (grapado) stitched (encuadernado)
+	@Column(name="impressionPerSide")
+	private String impressionPerSide; //Number of impression of each side 1,2(pages),2(slides),4 
+	@Column(name="isVertical")
+	private boolean isVertical; //Layout of the sheet. No price. True vertical, false horizontal
+	@Column(name="ringedPosition") 
+	private boolean ringedPosition; //Layout of the ringed. True vertical, false horizontal
 	
-	private float copyPrice;
-	private float colorPrice;
-	private float sizePrice;
-	private float thicknessPrice;
-	private float impressionTypePrice;
-	private float finishTypePrice;
-	private float impressionPerSidePrice;
-	private float ringedPositionPrice;
-	
+	@Column(name="comment")
 	private String comment;
+	
+	@Column(name="url")
+	private String url;
+	
+	public Document() {
+		this.id=-1L;
+	}
 
-	public Document(int nCopies, String color, String size, int thickness, String impressionType,
-			String finishType, int impressionPerSide, String orientation, String ringedPosition, String comment) {
+	public Document(int nCopies, Color isColor, Size size, PaperThickness thickness, String impressionType,
+			Ended finishType, String impressionPerSide, boolean isVertical, boolean ringedPosition, String comment,
+			String url) {
 		super();
-		this.id = -1L;
+		this.id=-1L;
 		this.nCopies = nCopies;
-		this.color = color;
+		this.isColor = isColor;
 		this.size = size;
 		this.thickness = thickness;
 		this.impressionType = impressionType;
 		this.finishType = finishType;
-		this.impressionPerSide.icode=impressionPerSide;
-		this.orientation = orientation;
+		this.impressionPerSide = impressionPerSide;
+		this.isVertical = isVertical;
+		this.ringedPosition = ringedPosition;
+		this.comment = comment;
+		this.url = url;
+	}
+	
+	public Document(int nCopies, Color isColor, Size size, PaperThickness thickness, String impressionType,
+			Ended finishType, String impressionPerSide, boolean isVertical, boolean ringedPosition, String comment) {
+		super();
+		this.id=-1L;
+		this.nCopies = nCopies;
+		this.isColor = isColor;
+		this.size = size;
+		this.thickness = thickness;
+		this.impressionType = impressionType;
+		this.finishType = finishType;
+		this.impressionPerSide = impressionPerSide;
+		this.isVertical = isVertical;
 		this.ringedPosition = ringedPosition;
 		this.comment = comment;
 	}
-
-	public Document(int nCopies, String color, String size, int thickness, String impressionType,
-			String finishType, int impressionPerSide, String orientation, String ringedPosition) {
+	
+	public Document(int nCopies, Color isColor, Size size, PaperThickness thickness, String impressionType,
+			Ended finishType, String impressionPerSide, boolean isVertical, boolean ringedPosition) {
 		super();
-		this.id = -1L;
+		this.id=-1L;
 		this.nCopies = nCopies;
-		this.color = color;
+		this.isColor = isColor;
 		this.size = size;
 		this.thickness = thickness;
 		this.impressionType = impressionType;
 		this.finishType = finishType;
-		this.impressionPerSide.icode = impressionPerSide;
-		this.orientation = orientation;
+		this.impressionPerSide = impressionPerSide;
+		this.isVertical = isVertical;
 		this.ringedPosition = ringedPosition;
 	}
 
@@ -113,27 +140,27 @@ public class Document {
 		this.nCopies = nCopies;
 	}
 
-	public String getColor() {
-		return color;
+	public Color getIsColor() {
+		return isColor;
 	}
 
-	public void setColor(String color) {
-		this.color = color;
+	public void setIsColor(Color isColor) {
+		this.isColor = isColor;
 	}
 
-	public String getSize() {
+	public Size getSize() {
 		return size;
 	}
 
-	public void setSize(String size) {
+	public void setSize(Size size) {
 		this.size = size;
 	}
 
-	public int getThickness() {
+	public PaperThickness getThickness() {
 		return thickness;
 	}
 
-	public void setThickness(int thickness) {
+	public void setThickness(PaperThickness thickness) {
 		this.thickness = thickness;
 	}
 
@@ -145,100 +172,36 @@ public class Document {
 		this.impressionType = impressionType;
 	}
 
-	public String getFinishType() {
+	public Ended getFinishType() {
 		return finishType;
 	}
 
-	public void setFinishType(String finishType) {
+	public void setFinishType(Ended finishType) {
 		this.finishType = finishType;
 	}
 
-	public impressionsTypes getImpressionPerSide() {
+	public String getImpressionPerSide() {
 		return impressionPerSide;
 	}
 
-	public void setImpressionPerSide(impressionsTypes impressionPerSide) {
+	public void setImpressionPerSide(String impressionPerSide) {
 		this.impressionPerSide = impressionPerSide;
 	}
 
-	public String getOrientation() {
-		return orientation;
+	public boolean isVertical() {
+		return isVertical;
 	}
 
-	public void setOrientation(String orientation) {
-		this.orientation = orientation;
+	public void setVertical(boolean isVertical) {
+		this.isVertical = isVertical;
 	}
 
-	public String getRingedPosition() {
+	public boolean getRingedPosition() {
 		return ringedPosition;
 	}
 
-	public void setRingedPosition(String ringedPosition) {
+	public void setRingedPosition(boolean ringedPosition) {
 		this.ringedPosition = ringedPosition;
-	}
-
-	public float getCopyPrice() {
-		return copyPrice;
-	}
-
-	public void setCopyPrice(float copyPrice) {
-		this.copyPrice = copyPrice;
-	}
-
-	public float getColorPrice() {
-		return colorPrice;
-	}
-
-	public void setColorPrice(float colorPrice) {
-		this.colorPrice = colorPrice;
-	}
-
-	public float getSizePrice() {
-		return sizePrice;
-	}
-
-	public void setSizePrice(float sizePrice) {
-		this.sizePrice = sizePrice;
-	}
-
-	public float getThicknessPrice() {
-		return thicknessPrice;
-	}
-
-	public void setThicknessPrice(float thicknessPrice) {
-		this.thicknessPrice = thicknessPrice;
-	}
-
-	public float getImpressionTypePrice() {
-		return impressionTypePrice;
-	}
-
-	public void setImpressionTypePrice(float impressionTypePrice) {
-		this.impressionTypePrice = impressionTypePrice;
-	}
-
-	public float getFinishTypePrice() {
-		return finishTypePrice;
-	}
-
-	public void setFinishTypePrice(float finishTypePrice) {
-		this.finishTypePrice = finishTypePrice;
-	}
-
-	public float getImpressionPerSidePrice() {
-		return impressionPerSidePrice;
-	}
-
-	public void setImpressionPerSidePrice(float impressionPerSidePrice) {
-		this.impressionPerSidePrice = impressionPerSidePrice;
-	}
-
-	public float getRingedPositionPrice() {
-		return ringedPositionPrice;
-	}
-
-	public void setRingedPositionPrice(float ringedPositionPrice) {
-		this.ringedPositionPrice = ringedPositionPrice;
 	}
 
 	public String getComment() {
@@ -249,14 +212,19 @@ public class Document {
 		this.comment = comment;
 	}
 
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
 	@Override
 	public String toString() {
-		return "Document [id=" + id + ", nCopies=" + nCopies + ", color=" + color + ", size=" + size + ", thickness="
-				+ thickness + ", impressionType=" + impressionType + ", finishType=" + finishType
-				+ ", impressionPerSide=" + impressionPerSide + ", orientation=" + orientation + ", ringedPosition="
-				+ ringedPosition + ", copyPrice=" + copyPrice + ", colorPrice=" + colorPrice + ", sizePrice="
-				+ sizePrice + ", thicknessPrice=" + thicknessPrice + ", impressionTypePrice=" + impressionTypePrice
-				+ ", finishTypePrice=" + finishTypePrice + ", impressionPerSidePrice=" + impressionPerSidePrice
-				+ ", ringedPositionPrice=" + ringedPositionPrice + ", comment=" + comment + "]";
+		return "Document [id=" + id + ", nCopies=" + nCopies + ", isColor=" + isColor + ", size=" + size
+				+ ", thickness=" + thickness + ", impressionType=" + impressionType + ", finishType=" + finishType
+				+ ", impressionPerSide=" + impressionPerSide + ", isVertical=" + isVertical + ", ringedPosition="
+				+ ringedPosition + ", comment=" + comment + ", url=" + url + "]";
 	}
 }
