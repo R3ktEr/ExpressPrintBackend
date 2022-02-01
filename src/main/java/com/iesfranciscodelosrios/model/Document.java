@@ -3,17 +3,9 @@ package com.iesfranciscodelosrios.model;
 import java.io.Serial;
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
-import com.iesfranciscodelosrios.model.price.Color;
-import com.iesfranciscodelosrios.model.price.Ended;
-import com.iesfranciscodelosrios.model.price.Size;
-import com.iesfranciscodelosrios.model.price.Thickness;
+import com.iesfranciscodelosrios.model.price.*;
 
 @Entity
 @Table(name="Document")
@@ -26,20 +18,20 @@ public class Document implements Serializable{
 	@Column(name="id")
 	private Long id;
 	
-	@Column(name="copies")
-	private int nCopies; //Number of copies
-	@Column(name="color")
+	@OneToOne(fetch = FetchType.EAGER,targetEntity = Copy.class)
+	private Copy nCopies; //Number of copies
+	@OneToOne(fetch = FetchType.EAGER,targetEntity = Color.class)
 	private Color isColor; //Color of the document. true color; false black and white;
-	@Column(name="size") 
+	@OneToOne(fetch = FetchType.EAGER,targetEntity = Size.class)
 	private Size size; //Size of the paper
-	@Column(name="thickness")
+	@OneToOne(fetch = FetchType.EAGER,targetEntity = Thickness.class)
 	private Thickness thickness; //Thickness of the paper
 	@Column(name="impressionType")
-	private String impressionType; //One or two sides
-	@Column(name="finishType") 
+	private boolean isTwoSides; //One or two sides
+	@OneToOne(fetch = FetchType.EAGER, targetEntity = Ended.class)
 	private Ended finishType; //How the sheets will be arranged. Saddle (grapado) stitched (encuadernado)
-	@Column(name="impressionPerSide")
-	private String impressionPerSide; //Number of impression of each side 1,2(pages),2(slides),4 
+	@OneToOne(fetch = FetchType.EAGER,targetEntity = ImpressionPerSide.class)
+	private ImpressionPerSide impressionPerSide; //Number of impression of each side 1,2(pages),2(slides),4
 	@Column(name="isVertical")
 	private boolean isVertical; //Layout of the sheet. No price. True vertical, false horizontal
 	@Column(name="ringedPosition") 
@@ -55,8 +47,8 @@ public class Document implements Serializable{
 		this.id=-1L;
 	}
 
-	public Document(int nCopies, Color isColor, Size size, Thickness thickness, String impressionType,
-			Ended finishType, String impressionPerSide, boolean isVertical, boolean ringedPosition, String comment,
+	public Document(Copy nCopies, Color isColor, Size size, Thickness thickness, boolean isTwoSides,
+			Ended finishType, ImpressionPerSide impressionPerSide, boolean isVertical, boolean ringedPosition, String comment,
 			String url) {
 		super();
 		this.id=-1L;
@@ -64,7 +56,7 @@ public class Document implements Serializable{
 		this.isColor = isColor;
 		this.size = size;
 		this.thickness = thickness;
-		this.impressionType = impressionType;
+		this.isTwoSides = isTwoSides;
 		this.finishType = finishType;
 		this.impressionPerSide = impressionPerSide;
 		this.isVertical = isVertical;
@@ -73,15 +65,15 @@ public class Document implements Serializable{
 		this.url = url;
 	}
 	
-	public Document(int nCopies, Color isColor, Size size, Thickness thickness, String impressionType,
-			Ended finishType, String impressionPerSide, boolean isVertical, boolean ringedPosition, String comment) {
+	public Document(Copy nCopies, Color isColor, Size size, Thickness thickness, boolean isTwoSides,
+			Ended finishType, ImpressionPerSide impressionPerSide, boolean isVertical, boolean ringedPosition, String comment) {
 		super();
 		this.id=-1L;
 		this.nCopies = nCopies;
 		this.isColor = isColor;
 		this.size = size;
 		this.thickness = thickness;
-		this.impressionType = impressionType;
+		this.isTwoSides = isTwoSides;
 		this.finishType = finishType;
 		this.impressionPerSide = impressionPerSide;
 		this.isVertical = isVertical;
@@ -89,15 +81,15 @@ public class Document implements Serializable{
 		this.comment = comment;
 	}
 	
-	public Document(int nCopies, Color isColor, Size size, Thickness thickness, String impressionType,
-			Ended finishType, String impressionPerSide, boolean isVertical, boolean ringedPosition) {
+	public Document(Copy nCopies, Color isColor, Size size, Thickness thickness, boolean isTwoSides,
+			Ended finishType, ImpressionPerSide impressionPerSide, boolean isVertical, boolean ringedPosition) {
 		super();
 		this.id=-1L;
 		this.nCopies = nCopies;
 		this.isColor = isColor;
 		this.size = size;
 		this.thickness = thickness;
-		this.impressionType = impressionType;
+		this.isTwoSides = isTwoSides;
 		this.finishType = finishType;
 		this.impressionPerSide = impressionPerSide;
 		this.isVertical = isVertical;
@@ -137,11 +129,11 @@ public class Document implements Serializable{
 		this.id = id;
 	}
 
-	public int getnCopies() {
+	public Copy getnCopies() {
 		return nCopies;
 	}
 
-	public void setnCopies(int nCopies) {
+	public void setnCopies(Copy nCopies) {
 		this.nCopies = nCopies;
 	}
 
@@ -169,12 +161,12 @@ public class Document implements Serializable{
 		this.thickness = thickness;
 	}
 
-	public String getImpressionType() {
-		return impressionType;
+	public boolean isTwoSides() {
+		return isTwoSides;
 	}
 
-	public void setImpressionType(String impressionType) {
-		this.impressionType = impressionType;
+	public void setTwoSides(boolean twoSides) {
+		isTwoSides = twoSides;
 	}
 
 	public Ended getFinishType() {
@@ -185,11 +177,11 @@ public class Document implements Serializable{
 		this.finishType = finishType;
 	}
 
-	public String getImpressionPerSide() {
+	public ImpressionPerSide getImpressionPerSide() {
 		return impressionPerSide;
 	}
 
-	public void setImpressionPerSide(String impressionPerSide) {
+	public void setImpressionPerSide(ImpressionPerSide impressionPerSide) {
 		this.impressionPerSide = impressionPerSide;
 	}
 
@@ -228,7 +220,7 @@ public class Document implements Serializable{
 	@Override
 	public String toString() {
 		return "Document [id=" + id + ", nCopies=" + nCopies + ", isColor=" + isColor + ", size=" + size
-				+ ", thickness=" + thickness + ", impressionType=" + impressionType + ", finishType=" + finishType
+				+ ", thickness=" + thickness + ", impressionType=" + isTwoSides + ", finishType=" + finishType
 				+ ", impressionPerSide=" + impressionPerSide + ", isVertical=" + isVertical + ", ringedPosition="
 				+ ringedPosition + ", comment=" + comment + ", url=" + url + "]";
 	}

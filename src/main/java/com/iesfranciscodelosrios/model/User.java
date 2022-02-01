@@ -13,7 +13,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 @Entity
-@Table(name="User")
+@Table(name="_User")
 public class User implements Serializable{
 	@Serial
 	private static final long serialVersionUID = 1L;
