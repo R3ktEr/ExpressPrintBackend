@@ -26,8 +26,8 @@ public class Order implements Serializable {
     private boolean isPickedUp;
     @Column(name = "finalPrice")
     private double finalPrice;
-    @ManyToMany
-    private List<Discou> discounts;
+    @Transient
+    private List<Discount> discounts;
 
     public Order() {
         this.id = -1L;
