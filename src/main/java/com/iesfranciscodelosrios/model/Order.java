@@ -27,7 +27,7 @@ public class Order implements Serializable {
     @Column(name = "finalPrice")
     private double finalPrice;
     @ManyToMany
-    private List<Discount> discounts;
+    private List<Discou> discounts;
 
     public Order() {
         this.id = -1L;
