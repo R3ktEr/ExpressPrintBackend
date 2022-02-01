@@ -13,7 +13,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="ColorPrice")
-public class ColorPrice implements Serializable{
+public class Color implements Serializable{
 	
 	private static final long serialVersionUID=1L;
 	
@@ -31,7 +31,7 @@ public class ColorPrice implements Serializable{
 	@Column(name="valid")
 	private boolean valid;
 
-	public ColorPrice(Float price, String description, boolean valid) {
+	public Color(Float price, String description, boolean valid) {
 		super();
 		this.id = -1L;
 		this.price = price;

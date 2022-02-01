@@ -11,7 +11,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name="PaperThicknessPrice")
 
-public class PaperThicknessPrice {
+public class PaperThickness {
 
 
 	private static final long serialVersionUID=1L;
@@ -31,7 +31,7 @@ public class PaperThicknessPrice {
 	private boolean valid;
 	
 	
-	 public PaperThicknessPrice(Float price, String description, boolean valid) {
+	 public PaperThickness(Float price, String description, boolean valid) {
 		super();
 		this.id = -1L;
 		this.price = price;
