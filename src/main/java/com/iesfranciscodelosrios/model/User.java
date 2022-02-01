@@ -22,13 +22,13 @@ public class User implements Serializable{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="id")
 	private Long id;
-	@Column(name="id")
+	@Column(name="mail")
 	private String mail;
-	@Column(name="id")
+	@Column(name="name")
 	private String name;
-	@Column(name="id")
+	@Column(name="phoneNumber")
 	private int phoneNumber;
-	@Column(name="id")
+	@Column(name="admin")
 	private boolean admin;
 	@Transient //One to many
 	private List<Order> userOrders; 
