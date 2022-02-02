@@ -37,6 +37,9 @@ public class Document implements Serializable{
 	@Column(name="ringedPosition") 
 	private boolean ringedPosition; //Layout of the ringed. True vertical, false horizontal
 	
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = Order.class)
+	private Order order;
+	
 	@Column(name="comment")
 	private String comment;
 	
