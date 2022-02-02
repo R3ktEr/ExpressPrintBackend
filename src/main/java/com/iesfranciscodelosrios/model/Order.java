@@ -19,15 +19,23 @@ public class Order implements Serializable {
     @Column(name = "pickupDate")
     private LocalDateTime pickupDate;
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = User.class)
-    private User user;
+    private User user;  //Consulta personalizada sin usuario para el listado de los pedidos
     @Column(name = "isPayed")
     private boolean isPayed;
     @Column(name = "isPickedUp")
     private boolean isPickedUp;
     @Column(name = "finalPrice")
     private double finalPrice;
-    @Transient
+    
+    @JoinTable(name = "Discount_Order", joinColumns = @JoinColumn(name="id_order",nullable = false), 
+    		inverseJoinColumns = @JoinColumn(name="id_discount", nullable = false), uniqueConstraints = {
+    				@UniqueConstraint(columnNames = {"id_order","id_discount"})
+    		})
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = Discount.class)
     private List<Discount> discounts;
+    
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = Document.class)
+    private List<Document> documents;
 
     public Order() {
         this.id = -1L;
