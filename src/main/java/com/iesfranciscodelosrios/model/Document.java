@@ -222,6 +222,30 @@ public class Document implements Serializable{
 		this.url = url;
 	}
 
+	public Copy getCopyPrice() {
+		return CopyPrice;
+	}
+
+	public void setCopyPrice(Copy copyPrice) {
+		CopyPrice = copyPrice;
+	}
+
+	public int getnCopies() {
+		return nCopies;
+	}
+
+	public void setnCopies(int nCopies) {
+		this.nCopies = nCopies;
+	}
+
+	public Order getOrder() {
+		return order;
+	}
+
+	public void setOrder(Order order) {
+		this.order = order;
+	}
+
 	@Override
 	public String toString() {
 		return "Document [id=" + id + ", nCopies=" + CopyPrice + ", isColor=" + isColor + ", size=" + size
