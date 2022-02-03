@@ -7,7 +7,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "PaperThickness")
+@Table(name = "Thickness")
 public class Thickness extends Price implements Serializable {
     private enum ThicknessType {
         G80(0),
