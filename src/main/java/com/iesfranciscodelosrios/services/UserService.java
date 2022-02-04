@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 public class UserService {
     @Autowired
     UserRepository userRepository;
+    
+    
     public List<User> getAllUsers(){
 		List<User> result=userRepository.findAll();
 		return result;
@@ -46,7 +48,18 @@ public class UserService {
 		if(user.isPresent()) {
 			userRepository.deleteById(id);
 		}else {
-			throw  new Exception() ;
+			throw  new Exception("Usuario no encontrado") ;
 		}
 	}
+	
+	public User findUserById(Long Id)throws Exception{
+		Optional<User> user=userRepository.findById(Id);
+		if(user.isPresent()) {
+			return user.get();
+		}else{
+			throw  new Exception("Usuario no encontrado") ;
+		}
+	
+	}
+	
 }
