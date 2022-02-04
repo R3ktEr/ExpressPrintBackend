@@ -14,7 +14,12 @@ public class UserService {
     @Autowired
     UserRepository userRepository;
         
-	
+	/**
+	 * 
+	 * @param user
+	 * @return devuelve un usuario nuevo o actualiza uno ya existente
+	 * @throws Exception
+	 */
 	public User createOrUpdateUser(User user)throws Exception{
 		if(user.getId()!=null && user.getId()>0) {
 			Optional<User> n=  userRepository.findById(user.getId());
@@ -37,12 +42,29 @@ public class UserService {
 			return user;
 		}
 	}
-	
-	public List<User> getAllUsers(){
+	/**
+	 * 
+	 * @return Devuelve todos los usuarios registrados
+	 * @throws Exception devuelve mensaje de error en caso de que no existan
+	 */
+	public List<User> getAllUsers() throws Exception{
 		List<User> result=userRepository.findAll();
-		return result;
+		if(!result.isEmpty()) {
+			return result;
+		}else {
+			throw  new Exception("No hay usuarios registrados") ;
+		}
+		
+		
+		
 	}
 	
+	/**
+	 * 
+	 * @param Id
+	 * @return devuelve el usuario que coincida con el id
+	 * @throws Exception devuelve mensaje de error en caso de que no exista
+	 */
 	public User findUserById(Long Id)throws Exception{
 		Optional<User> user=userRepository.findById(Id);
 		if(user.isPresent()) {
@@ -53,6 +75,12 @@ public class UserService {
 	
 	}
 	
+	/**
+	 * 
+	 * @param mail
+	 * @return devuelve un solo usuario el cual contiene el mail
+	 * @throws Exception devuelve mensaje de error en caso de que no exista
+	 */
 	public User findUserByMail(String mail)throws Exception{
 		Optional<User> user=userRepository.findByMail(mail);
 		if(user.isPresent()) {
@@ -64,6 +92,11 @@ public class UserService {
 	}
 	
 	
+	/**
+	 * 
+	 * @param id Elimina de la base de datos al usuario cuyo id coincida con el de la busqueda
+	 * @throws Exception devuelve mensaje de error en caso de que no exista
+	 */
 	public void deleteUserById(Long id)throws Exception	{
 		Optional<User> user=userRepository.findById(id);
 		if(user.isPresent()) {
