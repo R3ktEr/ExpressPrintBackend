@@ -10,11 +10,11 @@ import org.springframework.data.jpa.repository.Query;
 public interface UserRepository extends JpaRepository<User, Long> {
 	
 	
-	/*//buscar usuario segun el correo
+	//buscar usuario segun el correo
 	@Query(nativeQuery= false, value= "SELECT u FROM User u WHERE mail= ?1")
 	Optional<User> findByMail(String mail);
 	//
-	
+	/*
 	//buscar usuario segun el correo
 	@Query(nativeQuery= false, value= "SELECT u FROM User u WHERE name= ?1")
 	Optional<User> findByName(String name);

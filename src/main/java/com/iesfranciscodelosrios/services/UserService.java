@@ -52,7 +52,16 @@ public class UserService {
 		}
 	
 	}
-
+	
+	public User findUserByMail(String mail)throws Exception{
+		Optional<User> user=userRepository.findByMail(mail);
+		if(user.isPresent()) {
+			return user.get();
+		}else{
+			throw  new Exception("Usuario no encontrado") ;
+		}
+	
+	}
 	
 	
 	public void deleteUserById(Long id)throws Exception	{
