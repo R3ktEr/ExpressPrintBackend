@@ -13,12 +13,7 @@ import org.springframework.stereotype.Service;
 public class UserService {
     @Autowired
     UserRepository userRepository;
-    
-    
-    public List<User> getAllUsers(){
-		List<User> result=userRepository.findAll();
-		return result;
-	}
+        
 	
 	public User createOrUpdateUser(User user)throws Exception{
 		if(user.getId()!=null && user.getId()>0) {
@@ -43,13 +38,9 @@ public class UserService {
 		}
 	}
 	
-	public void deleteUserById(Long id)throws Exception	{
-		Optional<User> user=userRepository.findById(id);
-		if(user.isPresent()) {
-			userRepository.deleteById(id);
-		}else {
-			throw  new Exception("Usuario no encontrado") ;
-		}
+	public List<User> getAllUsers(){
+		List<User> result=userRepository.findAll();
+		return result;
 	}
 	
 	public User findUserById(Long Id)throws Exception{
@@ -61,15 +52,15 @@ public class UserService {
 		}
 	
 	}
+
 	
-	public User findUserByMail(String mail)throws Exception{
-		Optional<User> user=userRepository.findByMail(mail);
+	
+	public void deleteUserById(Long id)throws Exception	{
+		Optional<User> user=userRepository.findById(id);
 		if(user.isPresent()) {
-			return user.get();
-		}else{
+			userRepository.deleteById(id);
+		}else {
 			throw  new Exception("Usuario no encontrado") ;
 		}
-	
 	}
-	
 }
