@@ -25,11 +25,10 @@ public class UserService {
 			Optional<User> n=  userRepository.findById(user.getId());
 			if(n.isPresent()) {
 				User newUser=n.get();
-				newUser.getId();
-				newUser.getMail();
-				newUser.getName();
-				newUser.getPhoneNumber();
-				newUser.getUserOrders();
+				newUser.setMail(user.getMail());
+				newUser.setName(user.getName());
+				newUser.setPhoneNumber(user.getPhoneNumber());
+				newUser.setUserOrders(user.getUserOrders());
 				newUser=userRepository.save(newUser);
 				return newUser;
 			}else {
