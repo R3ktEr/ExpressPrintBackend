@@ -12,7 +12,7 @@ public class Color extends Price implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
-    @Column(name = "isColor")
+    @Column(name = "is_color")
     private boolean isColor;
 
     public Color(Float price, boolean isColor, boolean valid) {
@@ -25,6 +25,14 @@ public class Color extends Price implements Serializable {
 
     public Color() {
         super();
+    }
+
+    public boolean isColor() {
+        return isColor;
+    }
+
+    public void setColor(boolean color) {
+        isColor = color;
     }
 
     @Override

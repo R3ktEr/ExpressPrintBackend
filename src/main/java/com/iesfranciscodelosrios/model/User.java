@@ -4,39 +4,33 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 @Entity
 @Table(name="_User")
 public class User implements Serializable{
 	@Serial
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="id")
 	private Long id;
-	@Column(name="mail")
+	@Column(name="mail", unique = true)
 	private String mail;
 	@Column(name="name")
 	private String name;
-	@Column(name="phoneNumber")
+	@Column(name="phone_number")
 	private int phoneNumber;
 	@Column(name="admin")
 	private boolean admin;
-	@Transient //One to many
-	private List<Order> userOrders; 
-	
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user", targetEntity = Order.class)
+	private List<Order> userOrders;
+
 	public User() {
 		this.id=-1L;
 	}
-	
+
 	public User(String mail, String name, int phoneNumber, boolean admin) {
 		super();
 		this.id = -1L;
@@ -45,7 +39,7 @@ public class User implements Serializable{
 		this.phoneNumber = phoneNumber;
 		this.admin = admin;
 	}
-	
+
 	public User(String mail, String name, int phoneNumber, boolean admin, List<Order> userOrders) {
 		super();
 		this.id = -1L;
@@ -133,5 +127,5 @@ public class User implements Serializable{
 	public String toString() {
 		return "User [id=" + id + ", mail=" + mail + ", name=" + name + ", phoneNumber=" + phoneNumber + ", admin="
 				+ admin + ", userOrders=" + userOrders + "]";
-	}	
+	}
 }

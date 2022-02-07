@@ -12,7 +12,13 @@ public class Copy extends Price implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    public Copy() {
+    public Copy(float price, boolean valid) {
+        super();
+        this.price = price;
+        this.valid = valid;
+    }
+
+    public Copy(){
         super();
     }
 
