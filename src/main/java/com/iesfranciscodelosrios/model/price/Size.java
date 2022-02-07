@@ -1,50 +1,40 @@
 package com.iesfranciscodelosrios.model.price;
 
-import java.io.Serial;
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serial;
+import java.io.Serializable;
+import com.iesfranciscodelosrios.model.price.Enums.sheetSize;
 
 @Entity
 @Table(name = "Size")
 public class Size extends Price implements Serializable {
-    private enum EndedType {
-        A3(0),
-        A4(1),
-        A5(2);
-
-        private int icode;
-
-        EndedType(int icode) {
-            this.icode = icode;
-        }
-
-        public int getICode() {
-            return this.icode;
-        }
-    }
 
     @Serial
     private static final long serialVersionUID = 1L;
-    @Column(name = "endedType")
-    private EndedType endedType;
-    @Column(name = "sheetSize")
+    @Column(name = "ended_type")
+    private sheetSize endedType;
+    @Column(name = "sheet_size")
     private String sheetSize;
+
+    public Size(sheetSize endedType,String sheetSize, float price, boolean valid){
+        super();
+        this.endedType = endedType;
+        this.sheetSize = sheetSize;
+        this.price = price;
+        this.valid = valid;
+    }
 
     public Size() {
         super();
     }
 
-    public EndedType getEndedType() {
+    public sheetSize getEndedType() {
         return endedType;
     }
 
-    public void setEndedType(EndedType endedType) {
+    public void setEndedType(sheetSize endedType) {
         this.endedType = endedType;
     }
 

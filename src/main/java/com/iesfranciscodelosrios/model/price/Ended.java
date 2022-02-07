@@ -1,40 +1,27 @@
 package com.iesfranciscodelosrios.model.price;
 
-import java.io.Serial;
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serial;
+import java.io.Serializable;
+import com.iesfranciscodelosrios.model.price.Enums.EndedType;
 
 @Entity
 @Table(name = "Ended")
 public class Ended extends Price implements Serializable {
-    private enum EndedType {
-        no_ended(0),
-        bound(1),
-        stapled(2),
-        twoHoles(3),
-        fourHoles(4);
-
-        private int icode;
-
-        EndedType(int icode) {
-            this.icode = icode;
-        }
-
-        public int getICode() {
-            return this.icode;
-        }
-    }
 
     @Serial
     private static final long serialVersionUID = 1L;
-    @Column(name = "endedType")
+    @Column(name = "ended_type")
     private EndedType endedType;
+
+    public Ended(EndedType endedType, float price, boolean valid){
+        super();
+        this.endedType = endedType;
+        this.price = price;
+        this.valid = valid;
+    }
 
     public Ended() {
         super();

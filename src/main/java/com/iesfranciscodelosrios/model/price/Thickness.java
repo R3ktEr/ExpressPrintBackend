@@ -5,32 +5,26 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.io.Serial;
 import java.io.Serializable;
+import com.iesfranciscodelosrios.model.price.Enums.ThicknessType;
 
 @Entity
 @Table(name = "Thickness")
 public class Thickness extends Price implements Serializable {
-    private enum ThicknessType {
-        G80(0),
-        G160(1),
-        G280(2);
-
-        private int icode;
-
-        ThicknessType(int icode) {
-            this.icode = icode;
-        }
-
-        public int getICode() {
-            return this.icode;
-        }
-    }
 
     @Serial
     private static final long serialVersionUID = 1L;
-    @Column(name = "thicknessType")
+    @Column(name = "thickness_type")
     private ThicknessType thicknessType;
     @Column(name = "description")
     private String description;
+
+    public Thickness(ThicknessType thicknessType, String description, float price, boolean valid){
+        super();
+        this.thicknessType = thicknessType;
+        this.description = description;
+        this.price = price;
+        this.valid = valid;
+    }
 
     public Thickness() {
         super();
