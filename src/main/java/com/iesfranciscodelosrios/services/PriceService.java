@@ -43,10 +43,11 @@ public class PriceService {
         return result;
     }
 
-    public void changeAllPrices(List<Price> newValues) {
+    public List<Price> changeAllPrices(List<Price> newValues) {
+        List<Price> result = new ArrayList<>();
         for (Price p : newValues) {
             if (p instanceof Color c)
-                changeColorPrice(c.isColor(), c.getPrice());
+                p = changeColorPrice(c.isColor(), c.getPrice());
             else if (p instanceof Copy c)
                 changeCopyPrice(c.getPrice());
             else if (p instanceof Ended e)
@@ -57,17 +58,19 @@ public class PriceService {
                 changeSizePrice(s.getEndedType(), s.getSheetSize(), s.getPrice());
             else if (p instanceof Thickness t)
                 changeThicknessPrice(t.getThicknessType(), t.getDescription(), t.getPrice());
+            result.add(p);
         }
+        return result;
     }
 
-    private void changeColorPrice(boolean isColor, float newPrice) {
+    private Color changeColorPrice(boolean isColor, float newPrice) {
         Color c = colorRepository.getColorPrice(isColor);
         if (c != null) {
             c.setValid(false);
             colorRepository.save(c);
         }
         Color color = new Color(newPrice, isColor, true);
-        colorRepository.save(color);
+        return colorRepository.save(color);
     }
 
     private void changeCopyPrice(float newPrice) {

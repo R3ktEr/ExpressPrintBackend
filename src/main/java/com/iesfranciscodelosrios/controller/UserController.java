@@ -4,11 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -32,36 +30,76 @@ import io.swagger.annotations.ApiResponses;
 public class UserController {
 	@Autowired
 	UserService service;
-	
+
+	@RequestMapping(method = {RequestMethod.POST, RequestMethod.PUT})
+	public ResponseEntity<User> createOrUpdateUser(@Valid @RequestBody User U){
+		User user;
+		HttpStatus httpStatus;
+		try{
+			user = service.createOrUpdateUser(U);
+			httpStatus = HttpStatus.OK;
+		}catch (Exception e){
+			user = new User();
+			e.printStackTrace();
+			httpStatus = HttpStatus.NOT_FOUND;
+		}
+		return new ResponseEntity<>(user,  new HttpHeaders(), httpStatus);
+	}
 	
 	@GetMapping
-	public ResponseEntity<User> createOrUpdateUser(@Valid @RequestBody User U)throws Exception{
-		User user = service.createOrUpdateUser(U);
-		return new ResponseEntity<User>(U,  new HttpHeaders(), HttpStatus.OK);
+	public ResponseEntity<List<User>> getAllUsers(){
+		List<User> all;
+		HttpStatus httpStatus;
+		try{
+			all = service.getAllUsers();
+			httpStatus = HttpStatus.OK;
+		}catch (Exception e){
+			all = new ArrayList<>();
+			httpStatus = HttpStatus.NOT_FOUND;
+		}
+		return new ResponseEntity<>(all, new HttpHeaders(),httpStatus);
 	}
 	
-	
-	@GetMapping
-	public ResponseEntity<List<User>> getAllUsers() throws Exception{
-		List<User> all = service.getAllUsers();
-		return new ResponseEntity<List<User>>(all, new HttpHeaders(),HttpStatus.OK); 
+	@DeleteMapping("/{id}")
+	public HttpStatus deleteUserById(@PathVariable("id")Long id){
+		HttpStatus httpStatus;
+		try{
+			service.deleteUserById(id);
+			httpStatus = HttpStatus.OK;
+		}catch (Exception e){
+			e.printStackTrace();
+			httpStatus = HttpStatus.NOT_FOUND;
+		}
+		return httpStatus;
 	}
 	
 	@GetMapping("/{id}")
-	public HttpStatus deleteNotesById(@PathVariable("id")Long id) throws Exception {
-		service.deleteUserById(id);
-		return HttpStatus.OK;
+	public ResponseEntity<User> getUserById(@PathVariable("id")Long id){
+		User user;
+		HttpStatus httpStatus;
+		try{
+			user = service.findUserById(id);
+			httpStatus = HttpStatus.OK;
+		}catch (Exception e){
+			e.printStackTrace();
+			user = new User();
+			httpStatus = HttpStatus.NOT_FOUND;
+		}
+		return new ResponseEntity<>(user, new HttpHeaders(), httpStatus);
 	}
 	
-	@GetMapping("/{id}")
-	public ResponseEntity<User> getNotesById(@PathVariable("id")Long id)throws Exception {
-		User user=service.findUserById(id);
-		return new ResponseEntity<User>(user, new HttpHeaders(), HttpStatus.OK);
-	}
-	
-	@GetMapping("/{id}")
-	public ResponseEntity<User> getNotesByMail(@PathVariable("mail")String mail)throws Exception {
-		User user=service.findUserByMail(mail);
-		return new ResponseEntity<User>(user, new HttpHeaders(), HttpStatus.OK);
+	@GetMapping("/{mail}")
+	public ResponseEntity<User> getUserByMail(@PathVariable("mail")String mail) {
+		User user;
+		HttpStatus httpStatus;
+		try{
+			user = service.findUserByMail(mail);
+			httpStatus = HttpStatus.OK;
+		}catch (Exception e){
+			e.printStackTrace();
+			user = new User();
+			httpStatus = HttpStatus.NOT_FOUND;
+		}
+		return new ResponseEntity<>(user, new HttpHeaders(), httpStatus);
 	}
 }
