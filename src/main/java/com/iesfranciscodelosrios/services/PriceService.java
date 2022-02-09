@@ -29,16 +29,16 @@ public class PriceService {
         result.add(colorRepository.getColorPrice(true));
         result.add(copyRepository.getLatestCopy());
         for (Enums.EndedType e : Enums.EndedType.values()) {
-            result.add(endedRepository.getLatestEnded(e));
+            result.add(endedRepository.getLatestEnded(e.getICode()));
         }
         for (Enums.ImpressionsTypes e : Enums.ImpressionsTypes.values()) {
-            result.add(impressionPerSideRepository.getLatestImpressionPerSide(e));
+            result.add(impressionPerSideRepository.getLatestImpressionPerSide(e.getICode()));
         }
         for (Enums.sheetSize e : Enums.sheetSize.values()) {
-            result.add(sizeRepository.getLatestSize(e));
+            result.add(sizeRepository.getLatestSize(e.getICode()));
         }
         for (Enums.ThicknessType e : Enums.ThicknessType.values()) {
-            result.add(thicknessRepository.getLatestThickness(e));
+            result.add(thicknessRepository.getLatestThickness(e.getICode()));
         }
         return result;
     }
@@ -46,18 +46,23 @@ public class PriceService {
     public List<Price> changeAllPrices(List<Price> newValues) {
         List<Price> result = new ArrayList<>();
         for (Price p : newValues) {
-            if (p instanceof Color c)
-                p = changeColorPrice(c.isColor(), c.getPrice());
-            else if (p instanceof Copy c)
-                changeCopyPrice(c.getPrice());
-            else if (p instanceof Ended e)
-                changeEndedPrice(e.getEndedType(), e.getPrice());
-            else if (p instanceof ImpressionPerSide i)
-                changeImpressionPrice(i.getImpressionsTypes(), i.getPrice());
-            else if (p instanceof Size s)
-                changeSizePrice(s.getEndedType(), s.getSheetSize(), s.getPrice());
-            else if (p instanceof Thickness t)
-                changeThicknessPrice(t.getThicknessType(), t.getDescription(), t.getPrice());
+            if (p instanceof Color) {
+                Color c = (Color) p;
+                p = changeColorPrice(c.isColor(), p.getPrice());
+            } else if (p instanceof Copy) {
+                p = changeCopyPrice(p.getPrice());
+            } else if (p instanceof Ended e) {
+                p = changeEndedPrice(e.getEndedType(), p.getPrice());
+            } else if (p instanceof ImpressionPerSide) {
+                ImpressionPerSide i = (ImpressionPerSide) p;
+                p = changeImpressionPrice(i.getImpressionsTypes(), p.getPrice());
+            } else if (p instanceof Size) {
+                Size s = (Size) p;
+                p = changeSizePrice(s.getEndedType(), s.getSheetSize(), p.getPrice());
+            } else if (p instanceof Thickness) {
+                Thickness t = (Thickness) p;
+                p = changeThicknessPrice(t.getThicknessType(), t.getDescription(), p.getPrice());
+            }
             result.add(p);
         }
         return result;
@@ -73,54 +78,54 @@ public class PriceService {
         return colorRepository.save(color);
     }
 
-    private void changeCopyPrice(float newPrice) {
+    private Copy changeCopyPrice(float newPrice) {
         Copy c = copyRepository.getLatestCopy();
         if (c != null) {
             c.setValid(false);
             copyRepository.save(c);
         }
         Copy copy = new Copy(newPrice, true);
-        copyRepository.save(copy);
+        return copyRepository.save(copy);
     }
 
-    private void changeEndedPrice(Enums.EndedType endedType, float newPrice) {
-        Ended e = endedRepository.getLatestEnded(endedType);
+    private Ended changeEndedPrice(Enums.EndedType endedType, float newPrice) {
+        Ended e = endedRepository.getLatestEnded(endedType.getICode());
         if (e != null) {
             e.setValid(false);
             endedRepository.save(e);
         }
         Ended ended = new Ended(endedType, newPrice, true);
-        endedRepository.save(ended);
+        return endedRepository.save(ended);
     }
 
-    private void changeImpressionPrice(Enums.ImpressionsTypes impressionsTypes, float newPrice) {
-        ImpressionPerSide ips = impressionPerSideRepository.getLatestImpressionPerSide(impressionsTypes);
+    private ImpressionPerSide changeImpressionPrice(Enums.ImpressionsTypes impressionsTypes, float newPrice) {
+        ImpressionPerSide ips = impressionPerSideRepository.getLatestImpressionPerSide(impressionsTypes.getICode());
         if (ips != null) {
             ips.setValid(false);
             impressionPerSideRepository.save(ips);
         }
         ImpressionPerSide impressionPerSide = new ImpressionPerSide(impressionsTypes, newPrice, true);
-        impressionPerSideRepository.save(impressionPerSide);
+        return impressionPerSideRepository.save(impressionPerSide);
     }
 
-    private void changeSizePrice(Enums.sheetSize sheetSize, String sizeOfSheet, float newPrice) {
-        Size s = sizeRepository.getLatestSize(sheetSize);
+    private Size changeSizePrice(Enums.sheetSize sheetSize, String sizeOfSheet, float newPrice) {
+        Size s = sizeRepository.getLatestSize(sheetSize.getICode());
         if (s != null) {
             s.setValid(false);
             sizeRepository.save(s);
         }
         Size size = new Size(sheetSize, sizeOfSheet, newPrice, true);
-        sizeRepository.save(size);
+        return sizeRepository.save(size);
     }
 
-    private void changeThicknessPrice(Enums.ThicknessType thicknessType, String description, float newPrice) {
-        Thickness t = thicknessRepository.getLatestThickness(thicknessType);
+    private Thickness changeThicknessPrice(Enums.ThicknessType thicknessType, String description, float newPrice) {
+        Thickness t = thicknessRepository.getLatestThickness(thicknessType.getICode());
         if (t != null) {
             t.setValid(false);
             thicknessRepository.save(t);
         }
         Thickness thickness = new Thickness(thicknessType, description, newPrice, true);
-        thicknessRepository.save(thickness);
+        return thicknessRepository.save(thickness);
     }
 
 }

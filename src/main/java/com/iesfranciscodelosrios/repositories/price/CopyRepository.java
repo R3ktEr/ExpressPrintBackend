@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 public interface CopyRepository extends JpaRepository<Copy, Long> {
-    @Query(nativeQuery = true, value = "SELECT c FROM copy c WHERE valid=true")
+    @Query(nativeQuery = true, value = "SELECT id, price, valid FROM copy WHERE valid=true")
     Copy getLatestCopy();
 }

@@ -1,4 +1,4 @@
-package com.iesfrancisodelosrios.expressprint;
+package com.iesfranciscodelosrios.expressprint;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

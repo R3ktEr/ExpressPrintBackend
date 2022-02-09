@@ -45,9 +45,10 @@ public class Order implements Serializable {
         this.id = -1L;
     }
 
-    public Order(LocalDateTime pickupDate, User user, boolean isPayed, boolean isPickedUp, double finalPrice, List<Discount> discounts, List<Document> documents, boolean isReady) {
+    public Order(LocalDateTime pickupDate,LocalDateTime orderDate, User user, boolean isPayed, boolean isPickedUp, double finalPrice, List<Discount> discounts, List<Document> documents, boolean isReady) {
         this.id = -1L;
         this.pickupDate = pickupDate;
+        this.orderDate = orderDate;
         this.user = user;
         this.isPayed = isPayed;
         this.isPickedUp = isPickedUp;
@@ -136,6 +137,14 @@ public class Order implements Serializable {
 
     public void setDocuments(List<Document> documents) {
         this.documents = documents;
+    }
+
+    public LocalDateTime getOrderDate() {
+        return orderDate;
+    }
+
+    public void setOrderDate(LocalDateTime orderDate) {
+        this.orderDate = orderDate;
     }
 
     @Override

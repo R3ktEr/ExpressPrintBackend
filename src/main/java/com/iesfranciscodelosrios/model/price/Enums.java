@@ -20,10 +20,10 @@ public class Enums {
     }
 
     public enum ImpressionsTypes {
-        normal(1),
-        twoPages(2),
-        twoSlides(3),
-        fourSlides(4);
+        normal(0),
+        twoPages(1),
+        twoSlides(2),
+        fourSlides(3);
 
         private int icode;
 
