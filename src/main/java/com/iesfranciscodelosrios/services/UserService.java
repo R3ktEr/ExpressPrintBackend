@@ -64,7 +64,7 @@ public class UserService {
 	 * @return devuelve el usuario que coincida con el id
 	 * @throws Exception devuelve mensaje de error en caso de que no exista
 	 */
-	public User findUserById(Long Id)throws Exception{
+	/*public User findUserById(Long Id)throws Exception{
 		Optional<User> user=userRepository.findById(Id);
 		if(user.isPresent()) {
 			return user.get();
@@ -72,7 +72,7 @@ public class UserService {
 			throw  new Exception("Usuario no encontrado") ;
 		}
 	
-	}
+	}*/
 	
 	/**
 	 * 
