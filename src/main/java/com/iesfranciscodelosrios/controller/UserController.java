@@ -55,6 +55,7 @@ public class UserController {
 			httpStatus = HttpStatus.OK;
 		}catch (Exception e){
 			all = new ArrayList<>();
+			e.printStackTrace();
 			httpStatus = HttpStatus.NOT_FOUND;
 		}
 		return new ResponseEntity<>(all, new HttpHeaders(),httpStatus);
