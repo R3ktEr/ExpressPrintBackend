@@ -16,16 +16,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.iesfranciscodelosrios.model.Order;
-import com.iesfranciscodelosrios.model.User;
 import com.iesfranciscodelosrios.services.OrderService;
-import com.iesfranciscodelosrios.services.UserService;
 
 @RestController 
 @RequestMapping("/orders") 
 public class OrderController {
 	@Autowired
 	OrderService orderService;
-	UserService userService;
 	
 	@GetMapping
 	public ResponseEntity<List<Order>> getAllDocuments(){
@@ -63,8 +60,7 @@ public class OrderController {
 		List<Order> orders;
 		
 		try {
-			User u=userService.findUserById(id_u); 
-			orders = orderService.getOrdersByUser(u); 
+			orders = orderService.getOrdersByUser(id_u); 
 			
 			httpstatus=HttpStatus.OK;
 		} catch (Exception e) {

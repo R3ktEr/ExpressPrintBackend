@@ -1,7 +1,6 @@
 package com.iesfranciscodelosrios.services;
 
 import com.iesfranciscodelosrios.model.Order;
-import com.iesfranciscodelosrios.model.User;
 import com.iesfranciscodelosrios.repositories.OrderRepository;
 
 import java.util.List;
@@ -29,8 +28,8 @@ public class OrderService {
 		}
 	}
 	
-	public List<Order> getOrdersByUser(User user) throws Exception {
-		List<Order> orders=orderRepository.getOrdersByUser(user);
+	public List<Order> getOrdersByUser(Long id_user) throws Exception {
+		List<Order> orders=orderRepository.getOrdersByUser(id_user);
 		if(!orders.isEmpty()) {
 			return orders;
 		}else {

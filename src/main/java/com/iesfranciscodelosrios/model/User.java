@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
 @Table(name="_User")
 public class User implements Serializable{
@@ -24,6 +26,7 @@ public class User implements Serializable{
 	private int phoneNumber;
 	@Column(name="admin")
 	private boolean admin;
+	@JsonIgnoreProperties("user")
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user", targetEntity = Order.class)
 	private List<Order> userOrders;
 

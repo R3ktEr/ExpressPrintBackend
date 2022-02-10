@@ -3,6 +3,7 @@ package com.iesfranciscodelosrios.model;
 import javax.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -25,6 +26,9 @@ public class Discount implements Serializable {
     //"Es fijo el descuento?"
     @Column(name="is_fixed", nullable = false)
     private boolean isFixed;
+    
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "discounts", targetEntity = Order.class)
+    private List<Order> orders;
 
     public Discount() {
         this.id = -1L;
@@ -78,7 +82,15 @@ public class Discount implements Serializable {
         isFixed = fixed;
     }
 
-    @Override
+    public List<Order> getOrders() {
+		return orders;
+	}
+
+	public void setOrders(List<Order> orders) {
+		this.orders = orders;
+	}
+
+	@Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -86,8 +98,9 @@ public class Discount implements Serializable {
         return Objects.equals(id, discount.id);
     }
 
-    @Override
-    public String toString() {
-        return "Discount{" + "id=" + id + ", name='" + name + '\'' + ", percentage=" + percentage + ", fixedValue=" + fixedValue + ", isFixed=" + isFixed + '}';
-    }
+	@Override
+	public String toString() {
+		return "Discount [id=" + id + ", name=" + name + ", percentage=" + percentage + ", fixedValue=" + fixedValue
+				+ ", isFixed=" + isFixed + ", orders=" + orders + "]";
+	}
 }

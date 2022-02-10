@@ -79,6 +79,7 @@ public class UserController {
 		HttpStatus httpStatus;
 		try{
 			user = service.findUserById(id);
+			System.out.println(user.getUserOrders());
 			httpStatus = HttpStatus.OK;
 		}catch (Exception e){
 			e.printStackTrace();
@@ -87,6 +88,7 @@ public class UserController {
 		}
 		return new ResponseEntity<>(user, new HttpHeaders(), httpStatus);
 	}
+	
 	
 	@GetMapping("/{mail}")
 	public ResponseEntity<User> getUserByMail(@PathVariable("mail")String mail) {
