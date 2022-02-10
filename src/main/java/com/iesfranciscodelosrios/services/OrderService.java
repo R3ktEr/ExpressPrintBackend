@@ -1,8 +1,10 @@
 package com.iesfranciscodelosrios.services;
 
 import com.iesfranciscodelosrios.model.Order;
+import com.iesfranciscodelosrios.model.User;
 import com.iesfranciscodelosrios.repositories.OrderRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,6 +15,10 @@ import org.springframework.stereotype.Service;
 public class OrderService {
     @Autowired
     OrderRepository orderRepository;
+    @Autowired
+    DiscountService discountService;
+    @Autowired
+    UserService userService;
 
     public List<Order> getAllOrder() {
 		List<Order> orders=orderRepository.findAll();
@@ -49,17 +55,40 @@ public class OrderService {
 				newOrder.setPickedUp(order.isPickedUp());
 				newOrder.setFinalPrice(order.getFinalPrice());
 				
+				newOrder.setDiscounts(discountService.getAllDiscounts());
+				
 				newOrder = orderRepository.save(newOrder);
 				return newOrder;
-			}else { //Insert
-				order.setId(null);
-				order=orderRepository.save(order);
-				return order;
+			}else {
+				//lanzar excepcion de not found
+				return new Order();
 			}
-		}else {
-			order=orderRepository.save(order);
-			return order;
+		}else { //Insert
+			order.setId(null);
+			order.setOrderDate(LocalDateTime.now());
+			order.setDiscounts(discountService.getAllDiscounts());
+			
+			/**
+			 * Compruebo que el usuario pasado por JSON exista en la base de datos y me lo traigo ya persistido
+			 */
+			User u1=order.getUser();
+			
+			try {
+				User u2=userService.findUserByMail(u1.getMail());
+				if(u1.equals(u2)&&(u1.getMail().equals(u2.getMail()))) {
+					order.setUser(u2);
+					order=orderRepository.save(order);			
+				}else {
+					order=new Order();
+				}
+				
+				return order;
+			} catch (Exception e) {
+				e.printStackTrace();
+				return new Order();
+			}
 		}
+		
 	}
 	
 	public void deleteOrderById(Long id) throws Exception{
