@@ -55,6 +55,7 @@ public class UserController {
 			httpStatus = HttpStatus.OK;
 		}catch (Exception e){
 			all = new ArrayList<>();
+			e.printStackTrace();
 			httpStatus = HttpStatus.NOT_FOUND;
 		}
 		return new ResponseEntity<>(all, new HttpHeaders(),httpStatus);
@@ -73,7 +74,7 @@ public class UserController {
 		return httpStatus;
 	}
 	
-	@GetMapping("/{id}")
+	/*@GetMapping("/{id}")
 	public ResponseEntity<User> getUserById(@PathVariable("id")Long id){
 		User user;
 		HttpStatus httpStatus;
@@ -86,7 +87,7 @@ public class UserController {
 			httpStatus = HttpStatus.NOT_FOUND;
 		}
 		return new ResponseEntity<>(user, new HttpHeaders(), httpStatus);
-	}
+	}*/
 	
 	@GetMapping("/{mail}")
 	public ResponseEntity<User> getUserByMail(@PathVariable("mail")String mail) {
