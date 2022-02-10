@@ -1,6 +1,9 @@
 package com.iesfranciscodelosrios.model;
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -20,8 +23,10 @@ public class Order implements Serializable {
     private LocalDateTime pickupDate;
     @Column(name = "order_date")
     private LocalDateTime orderDate;
+    @JsonIgnoreProperties("userOrders")
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = User.class)
-    private User user;  //Consulta personalizada sin usuario para el listado de los pedidos
+    @JoinColumn(name="id_user")
+    private User user;
     @Column(name = "is_Payed")
     private boolean isPayed;
     @Column(name = "is_Picked_Up")

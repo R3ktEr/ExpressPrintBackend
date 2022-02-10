@@ -51,7 +51,8 @@ public class PriceService {
                 p = changeColorPrice(c.isColor(), p.getPrice());
             } else if (p instanceof Copy) {
                 p = changeCopyPrice(p.getPrice());
-            } else if (p instanceof Ended e) {
+            } else if (p instanceof Ended) {
+            	Ended e = (Ended) p;
                 p = changeEndedPrice(e.getEndedType(), p.getPrice());
             } else if (p instanceof ImpressionPerSide) {
                 ImpressionPerSide i = (ImpressionPerSide) p;
