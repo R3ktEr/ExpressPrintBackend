@@ -9,7 +9,7 @@ import com.iesfranciscodelosrios.model.price.Enums.ThicknessType;
 
 @Entity
 @Table(name = "Thickness")
-public class Thickness extends Price implements Serializable {
+public class Thickness extends Product implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

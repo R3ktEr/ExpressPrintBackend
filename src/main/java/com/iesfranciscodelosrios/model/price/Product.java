@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @MappedSuperclass
-public abstract class Price implements Serializable {
+public abstract class Product implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -19,7 +19,7 @@ public abstract class Price implements Serializable {
     @Column(name = "valid")
     protected boolean valid;
 
-    public Price() {
+    public Product() {
         this.id = -1L;
     }
 
@@ -35,10 +35,6 @@ public abstract class Price implements Serializable {
         return price;
     }
 
-    public void setPrice(Float price) {
-        this.price = price;
-    }
-
     public boolean isValid() {
         return valid;
     }
@@ -47,18 +43,22 @@ public abstract class Price implements Serializable {
         this.valid = valid;
     }
 
+    public void setPrice(Float price) {
+        this.price = price;
+    }
+
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Price price = (Price) o;
+        Product price = (Product) o;
         return Objects.equals(id, price.id);
     }
 
     @Override
     public String toString() {
-        return "id=" + id + ", price=" + price + ", valid=" + valid;
+        return "id=" + id + ", price=" + price;
     }
 
 }

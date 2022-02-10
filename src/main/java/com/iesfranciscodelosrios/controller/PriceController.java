@@ -1,6 +1,6 @@
 package com.iesfranciscodelosrios.controller;
 
-import com.iesfranciscodelosrios.model.price.Price;
+import com.iesfranciscodelosrios.model.price.Product;
 import com.iesfranciscodelosrios.services.PriceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -19,12 +19,12 @@ public class PriceController {
     PriceService priceService;
 
     @GetMapping
-    public ResponseEntity<List<Price>> getActualPrices(){
+    public ResponseEntity<List<Object>> getActualPrices(){
         return new ResponseEntity<>(priceService.getAllPrices(), new HttpHeaders(), HttpStatus.OK);
     }
 
     @RequestMapping(method = {RequestMethod.POST, RequestMethod.PUT})
-    public ResponseEntity<List<Price>> createOrUpdatePrices(@Valid @RequestBody List<Price> prices){
+    public ResponseEntity<List<Object>> createOrUpdatePrices(@Valid @RequestBody List<Object> prices){
         return new ResponseEntity<>(priceService.changeAllPrices(prices), new HttpHeaders(), HttpStatus.OK);
     }
 

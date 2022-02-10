@@ -1,5 +1,7 @@
 package com.iesfranciscodelosrios.model.price;
 
+import com.fasterxml.jackson.annotation.JsonRootName;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -8,7 +10,7 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "Color")
-public class Color extends Price implements Serializable {
+public class Color extends Product implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

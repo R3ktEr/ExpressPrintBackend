@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "Copy")
-public class Copy extends Price implements Serializable {
+public class Copy extends Product implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

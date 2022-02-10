@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class PriceService {
@@ -23,8 +25,8 @@ public class PriceService {
     @Autowired
     ThicknessRepository thicknessRepository;
 
-    public List<Price> getAllPrices() {
-        List<Price> result = new ArrayList<>();
+    public List<Object> getAllPrices() {
+        List<Product> result = new ArrayList<>();
         result.add(colorRepository.getColorPrice(false));
         result.add(colorRepository.getColorPrice(true));
         result.add(copyRepository.getLatestCopy());
@@ -40,32 +42,128 @@ public class PriceService {
         for (Enums.ThicknessType e : Enums.ThicknessType.values()) {
             result.add(thicknessRepository.getLatestThickness(e.getICode()));
         }
-        return result;
+        return sendFormattedDataToController(result);
     }
 
-    public List<Price> changeAllPrices(List<Price> newValues) {
-        List<Price> result = new ArrayList<>();
-        for (Price p : newValues) {
-            if (p instanceof Color) {
-                Color c = (Color) p;
-                p = changeColorPrice(c.isColor(), p.getPrice());
-            } else if (p instanceof Copy) {
-                p = changeCopyPrice(p.getPrice());
-            } else if (p instanceof Ended e) {
-                p = changeEndedPrice(e.getEndedType(), p.getPrice());
-            } else if (p instanceof ImpressionPerSide) {
-                ImpressionPerSide i = (ImpressionPerSide) p;
-                p = changeImpressionPrice(i.getImpressionsTypes(), p.getPrice());
-            } else if (p instanceof Size) {
-                Size s = (Size) p;
-                p = changeSizePrice(s.getEndedType(), s.getSheetSize(), p.getPrice());
-            } else if (p instanceof Thickness) {
-                Thickness t = (Thickness) p;
-                p = changeThicknessPrice(t.getThicknessType(), t.getDescription(), p.getPrice());
+    public List<Object> changeAllPrices(List<Object> newValues) {
+        List<Product> result = new ArrayList<>();
+        for (Object o : newValues) {
+            LinkedHashMap<String, Object> map = (LinkedHashMap<String, Object>) o;
+            for (Map.Entry<String, Object> entry : map.entrySet()) {
+                String key = entry.getKey();
+                Object value = entry.getValue();
+                switch (key) {
+                    case "Color" -> {
+                        List<Object> colorList = (List<Object>) value;
+                        for (Object color : colorList) {
+                            LinkedHashMap<String, Object> colormap = (LinkedHashMap<String, Object>) color;
+                            result.add(changeColorPrice((Boolean) colormap.get("isColor"), (float) ((Double) colormap.get("price")).doubleValue()));
+                        }
+                    }
+                    case "Copy" -> {
+                        LinkedHashMap<String, Object> copymap = (LinkedHashMap<String, Object>) value;
+                        result.add(changeCopyPrice((float) ((Double) copymap.get("price")).doubleValue()));
+                    }
+                    case "Ended" -> {
+                        List<Object> endedList = (List<Object>) value;
+                        for (Object ended : endedList) {
+                            LinkedHashMap<String, Object> endedmap = (LinkedHashMap<String, Object>) ended;
+                            result.add(changeEndedPrice(Enums.EndedType.valueOf(endedmap.get("endedType").toString()), (float) ((Double) endedmap.get("price")).doubleValue()));
+                        }
+                    }
+                    case "ImpressionPerSide" -> {
+                        List<Object> impressionList = (List<Object>) value;
+                        for (Object impression : impressionList) {
+                            LinkedHashMap<String, Object> impressionmap = (LinkedHashMap<String, Object>) impression;
+                            result.add(changeImpressionPrice(Enums.ImpressionsTypes.valueOf(impressionmap.get("impressionsTypes").toString()), (float) ((Double) impressionmap.get("price")).doubleValue()));
+                        }
+                    }
+                    case "Size" -> {
+                        List<Object> sizeList = (List<Object>) value;
+                        for (Object size : sizeList) {
+                            LinkedHashMap<String, Object> sizemap = (LinkedHashMap<String, Object>) size;
+                            result.add(changeSizePrice(Enums.sheetSize.valueOf(sizemap.get("sheetSize").toString()), sizemap.get("sheetSize").toString(), (float) ((Double) sizemap.get("price")).doubleValue()));
+                        }
+                    }
+                    case "Thickness" -> {
+                        List<Object> thicknessList = (List<Object>) value;
+                        for (Object thickness : thicknessList) {
+                            LinkedHashMap<String, Object> thicknessmap = (LinkedHashMap<String, Object>) thickness;
+                            result.add(changeThicknessPrice(Enums.ThicknessType.valueOf(thicknessmap.get("thicknessType").toString()), thicknessmap.get("description").toString(), (float) ((Double) thicknessmap.get("price")).doubleValue()));
+                        }
+                    }
+                }
             }
-            result.add(p);
         }
-        return result;
+        return sendFormattedDataToController(result);
+    }
+
+    private List<Object> sendFormattedDataToController(List<Product> values) {
+        List<Object> colors = null;
+        List<Object> endeds = null;
+        List<Object> impressions = null;
+        List<Object> sizes = null;
+        List<Object> thicknessS = null;
+        Object copy = null;
+        LinkedHashMap<String, Object> map = new LinkedHashMap<>();
+        for (Product p : values) {
+            if(p instanceof Color){
+                Color c = (Color) p;
+                if(colors == null)
+                    colors = new ArrayList<>();
+                LinkedHashMap<String, Object> color = new LinkedHashMap<>();
+                color.put("price", c.getPrice());
+                color.put("isColor", c.isColor());
+                colors.add(color);
+            }else if(p instanceof Ended){
+                Ended e = (Ended) p;
+                if(endeds == null)
+                    endeds = new ArrayList<>();
+                LinkedHashMap<String, Object> ended = new LinkedHashMap<>();
+                ended.put("price", e.getPrice());
+                ended.put("endedType", e.getEndedType().toString());
+                endeds.add(ended);
+            }else if(p instanceof ImpressionPerSide){
+                ImpressionPerSide i = (ImpressionPerSide) p;
+                if(impressions == null)
+                    impressions = new ArrayList<>();
+                LinkedHashMap<String, Object> impression = new LinkedHashMap<>();
+                impression.put("price", i.getPrice());
+                impression.put("impressionsTypes", i.getImpressionsTypes().toString());
+                impressions.add(impression);
+            }else if(p instanceof Size){
+                Size s = (Size) p;
+                if(sizes == null)
+                    sizes = new ArrayList<>();
+                LinkedHashMap<String, Object> size = new LinkedHashMap<>();
+                size.put("price", s.getPrice());
+                size.put("sheetSize", s.getSizeSheet().toString());
+                size.put("sizeOfSheet", s.getSheetSize());
+                sizes.add(size);
+            }else if(p instanceof Thickness){
+                Thickness t = (Thickness) p;
+                if(thicknessS == null)
+                    thicknessS = new ArrayList<>();
+                LinkedHashMap<String, Object> thickness = new LinkedHashMap<>();
+                thickness.put("price", t.getPrice());
+                thickness.put("thicknessType", t.getThicknessType().toString());
+                thickness.put("description", t.getDescription());
+                thicknessS.add(thickness);
+            }else if(p instanceof Copy){
+                Copy c = (Copy) p;
+                LinkedHashMap<String, Float> copymap = new LinkedHashMap<>();
+                copymap.put("price", c.getPrice());
+                if(copy == null)
+                    copy = copymap;
+            }
+        }
+        map.put("Color", colors);
+        map.put("Copy", copy);
+        map.put("Endeds", endeds);
+        map.put("ImpressionPerSide", impressions);
+        map.put("Sizes", sizes);
+        map.put("Thickness", thicknessS);
+        return List.of(map);
     }
 
     private Color changeColorPrice(boolean isColor, float newPrice) {
