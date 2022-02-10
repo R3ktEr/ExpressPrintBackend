@@ -9,7 +9,7 @@ import com.iesfranciscodelosrios.model.price.Enums.ImpressionsTypes;
 
 @Entity
 @Table(name = "Impression_per_side")
-public class ImpressionPerSide extends Price implements Serializable {
+public class ImpressionPerSide extends Product implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

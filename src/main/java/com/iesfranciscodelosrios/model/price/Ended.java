@@ -9,7 +9,7 @@ import com.iesfranciscodelosrios.model.price.Enums.EndedType;
 
 @Entity
 @Table(name = "Ended")
-public class Ended extends Price implements Serializable {
+public class Ended extends Product implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

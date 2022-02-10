@@ -9,18 +9,18 @@ import com.iesfranciscodelosrios.model.price.Enums.sheetSize;
 
 @Entity
 @Table(name = "Size")
-public class Size extends Price implements Serializable {
+public class Size extends Product implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
     @Column(name = "ended_type")
-    private sheetSize endedType;
+    private sheetSize sizeSheet;
     @Column(name = "sheet_size")
     private String sheetSize;
 
     public Size(sheetSize endedType,String sheetSize, float price, boolean valid){
         super();
-        this.endedType = endedType;
+        this.sizeSheet = endedType;
         this.sheetSize = sheetSize;
         this.price = price;
         this.valid = valid;
@@ -30,12 +30,12 @@ public class Size extends Price implements Serializable {
         super();
     }
 
-    public sheetSize getEndedType() {
-        return endedType;
+    public sheetSize getSizeSheet() {
+        return sizeSheet;
     }
 
-    public void setEndedType(sheetSize endedType) {
-        this.endedType = endedType;
+    public void setSizeSheet(sheetSize endedType) {
+        this.sizeSheet = endedType;
     }
 
     public String getSheetSize() {
@@ -48,7 +48,7 @@ public class Size extends Price implements Serializable {
 
     @Override
     public String toString() {
-        return "Size{" + super.toString() + ", endedType=" + endedType + ", sheetSize=" + sheetSize + "}";
+        return "Size{" + super.toString() + ", endedType=" + sizeSheet + ", sheetSize=" + sheetSize + "}";
     }
 
 }
