@@ -20,10 +20,10 @@ public class Discount implements Serializable {
     @Column(name="percentage")
     private Integer percentage;
     //null si "isFixed" es false
-    @Column(name="fixedValue")
+    @Column(name="fixed_Value")
     private Integer fixedValue;
     //"Es fijo el descuento?"
-    @Column(name="isFixed", nullable = false)
+    @Column(name="is_fixed", nullable = false)
     private boolean isFixed;
 
     public Discount() {

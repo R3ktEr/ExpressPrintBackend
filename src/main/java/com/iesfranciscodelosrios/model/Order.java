@@ -16,31 +16,46 @@ public class Order implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-    @Column(name = "pickupDate")
+    @Column(name = "pickup_Date")
     private LocalDateTime pickupDate;
+    @Column(name = "order_date")
+    private LocalDateTime orderDate;
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = User.class)
-    private User user;
-    @Column(name = "isPayed")
+    private User user;  //Consulta personalizada sin usuario para el listado de los pedidos
+    @Column(name = "is_Payed")
     private boolean isPayed;
-    @Column(name = "isPickedUp")
+    @Column(name = "is_Picked_Up")
     private boolean isPickedUp;
-    @Column(name = "finalPrice")
+    @Column(name = "final_Price")
     private double finalPrice;
-    @Transient
+    @Column(name = "is_ready")
+    private boolean isReady;
+    
+    @JoinTable(name = "Discount_Order", joinColumns = @JoinColumn(name="id_order",nullable = false), 
+    		inverseJoinColumns = @JoinColumn(name="id_discount", nullable = false), uniqueConstraints = {
+    				@UniqueConstraint(columnNames = {"id_order","id_discount"})
+    		})
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = Discount.class)
     private List<Discount> discounts;
+    
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = Document.class)
+    private List<Document> documents;
 
     public Order() {
         this.id = -1L;
     }
 
-    public Order(LocalDateTime pickupDate, User user, boolean isPayed, boolean isPickedUp, double finalPrice, List<Discount> discounts) {
+    public Order(LocalDateTime pickupDate,LocalDateTime orderDate, User user, boolean isPayed, boolean isPickedUp, double finalPrice, List<Discount> discounts, List<Document> documents, boolean isReady) {
         this.id = -1L;
         this.pickupDate = pickupDate;
+        this.orderDate = orderDate;
         this.user = user;
         this.isPayed = isPayed;
         this.isPickedUp = isPickedUp;
         this.finalPrice = finalPrice;
         this.discounts = discounts;
+        this.documents = documents;
+        this.isReady = isReady;
     }
 
     public Order(LocalDateTime pickupDate, User user, boolean isPayed, boolean isPickedUp, List<Discount> discounts) {
@@ -98,6 +113,38 @@ public class Order implements Serializable {
 
     public void setFinalPrice(double finalPrice) {
         this.finalPrice = finalPrice;
+    }
+
+    public boolean isReady() {
+        return isReady;
+    }
+
+    public void setReady(boolean ready) {
+        isReady = ready;
+    }
+
+    public List<Discount> getDiscounts() {
+        return discounts;
+    }
+
+    public void setDiscounts(List<Discount> discounts) {
+        this.discounts = discounts;
+    }
+
+    public List<Document> getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(List<Document> documents) {
+        this.documents = documents;
+    }
+
+    public LocalDateTime getOrderDate() {
+        return orderDate;
+    }
+
+    public void setOrderDate(LocalDateTime orderDate) {
+        this.orderDate = orderDate;
     }
 
     @Override

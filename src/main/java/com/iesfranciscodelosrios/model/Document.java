@@ -19,7 +19,9 @@ public class Document implements Serializable{
 	private Long id;
 	
 	@OneToOne(fetch = FetchType.EAGER,targetEntity = Copy.class)
-	private Copy nCopies; //Number of copies
+	private Copy CopyPrice; //Price per copy
+	@Column(name = "nCopies")
+	private int nCopies;  //Number of copies
 	@OneToOne(fetch = FetchType.EAGER,targetEntity = Color.class)
 	private Color isColor; //Color of the document. true color; false black and white;
 	@OneToOne(fetch = FetchType.EAGER,targetEntity = Size.class)
@@ -37,6 +39,9 @@ public class Document implements Serializable{
 	@Column(name="ringedPosition") 
 	private boolean ringedPosition; //Layout of the ringed. True vertical, false horizontal
 	
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = Order.class)
+	private Order order;
+	
 	@Column(name="comment")
 	private String comment;
 	
@@ -47,12 +52,12 @@ public class Document implements Serializable{
 		this.id=-1L;
 	}
 
-	public Document(Copy nCopies, Color isColor, Size size, Thickness thickness, boolean isTwoSides,
+	public Document(Copy CopyPrice, Color isColor, Size size, Thickness thickness, boolean isTwoSides,
 			Ended finishType, ImpressionPerSide impressionPerSide, boolean isVertical, boolean ringedPosition, String comment,
 			String url) {
 		super();
 		this.id=-1L;
-		this.nCopies = nCopies;
+		this.CopyPrice = CopyPrice;
 		this.isColor = isColor;
 		this.size = size;
 		this.thickness = thickness;
@@ -69,7 +74,7 @@ public class Document implements Serializable{
 			Ended finishType, ImpressionPerSide impressionPerSide, boolean isVertical, boolean ringedPosition, String comment) {
 		super();
 		this.id=-1L;
-		this.nCopies = nCopies;
+		this.CopyPrice = nCopies;
 		this.isColor = isColor;
 		this.size = size;
 		this.thickness = thickness;
@@ -85,7 +90,7 @@ public class Document implements Serializable{
 			Ended finishType, ImpressionPerSide impressionPerSide, boolean isVertical, boolean ringedPosition) {
 		super();
 		this.id=-1L;
-		this.nCopies = nCopies;
+		this.CopyPrice = nCopies;
 		this.isColor = isColor;
 		this.size = size;
 		this.thickness = thickness;
@@ -129,12 +134,12 @@ public class Document implements Serializable{
 		this.id = id;
 	}
 
-	public Copy getnCopies() {
-		return nCopies;
+	public Copy getnCopyPrice() {
+		return CopyPrice;
 	}
 
-	public void setnCopies(Copy nCopies) {
-		this.nCopies = nCopies;
+	public void setnCopyPrice(Copy nCopies) {
+		this.CopyPrice = nCopies;
 	}
 
 	public Color getIsColor() {
@@ -217,9 +222,33 @@ public class Document implements Serializable{
 		this.url = url;
 	}
 
+	public Copy getCopyPrice() {
+		return CopyPrice;
+	}
+
+	public void setCopyPrice(Copy copyPrice) {
+		CopyPrice = copyPrice;
+	}
+
+	public int getnCopies() {
+		return nCopies;
+	}
+
+	public void setnCopies(int nCopies) {
+		this.nCopies = nCopies;
+	}
+
+	public Order getOrder() {
+		return order;
+	}
+
+	public void setOrder(Order order) {
+		this.order = order;
+	}
+
 	@Override
 	public String toString() {
-		return "Document [id=" + id + ", nCopies=" + nCopies + ", isColor=" + isColor + ", size=" + size
+		return "Document [id=" + id + ", nCopies=" + CopyPrice + ", isColor=" + isColor + ", size=" + size
 				+ ", thickness=" + thickness + ", impressionType=" + isTwoSides + ", finishType=" + finishType
 				+ ", impressionPerSide=" + impressionPerSide + ", isVertical=" + isVertical + ", ringedPosition="
 				+ ringedPosition + ", comment=" + comment + ", url=" + url + "]";

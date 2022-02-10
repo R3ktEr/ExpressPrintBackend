@@ -5,31 +5,23 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.io.Serial;
 import java.io.Serializable;
+import com.iesfranciscodelosrios.model.price.Enums.ImpressionsTypes;
 
 @Entity
-@Table(name = "ImpressionPerSide")
+@Table(name = "Impression_per_side")
 public class ImpressionPerSide extends Price implements Serializable {
-    private enum ImpressionsTypes {
-        normal(1),
-        twoPages(2),
-        twoSlides(3),
-        fourSlides(4);
-
-        private int icode;
-
-        ImpressionsTypes(int icode) {
-            this.icode = icode;
-        }
-
-        public int getICode() {
-            return this.icode;
-        }
-    }
 
     @Serial
     private static final long serialVersionUID = 1L;
-    @Column(name = "impressionsType")
+    @Column(name = "impressions_type")
     private ImpressionsTypes impressionsTypes;
+
+    public ImpressionPerSide(ImpressionsTypes impressionsTypes, float price, boolean valid){
+        super();
+        this.impressionsTypes = impressionsTypes;
+        this.price = price;
+        this.valid = valid;
+    }
 
     public ImpressionPerSide() {
         super();

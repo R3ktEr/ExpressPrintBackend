@@ -1,6 +1,5 @@
 package com.iesfranciscodelosrios.model.price;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.io.Serial;
@@ -12,24 +11,20 @@ public class Copy extends Price implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
-    @Column(name = "nCopys")
-    private int nCopys;
 
-    public Copy() {
+    public Copy(float price, boolean valid) {
         super();
+        this.price = price;
+        this.valid = valid;
     }
 
-    public void setnCopys(int nCopys) {
-        this.nCopys = nCopys;
-    }
-
-    public int getnCopys() {
-        return nCopys;
+    public Copy(){
+        super();
     }
 
     @Override
     public String toString() {
-        return "Copy{" + super.toString() + ", nCopys=" + nCopys + "}";
+        return "Copy{" + super.toString() + "}";
     }
 
 }
