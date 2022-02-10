@@ -6,6 +6,9 @@ import java.util.List;
 
 import javax.persistence.*;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
@@ -27,6 +30,7 @@ public class User implements Serializable{
 	@Column(name="admin")
 	private boolean admin;
 	@JsonIgnoreProperties("user")
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user", targetEntity = Order.class)
 	private List<Order> userOrders;
 

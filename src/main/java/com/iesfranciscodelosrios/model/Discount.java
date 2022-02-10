@@ -1,6 +1,9 @@
 package com.iesfranciscodelosrios.model;
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
@@ -27,6 +30,7 @@ public class Discount implements Serializable {
     @Column(name="is_fixed", nullable = false)
     private boolean isFixed;
     
+    @JsonIgnoreProperties("discounts")
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "discounts", targetEntity = Order.class)
     private List<Order> orders;
 

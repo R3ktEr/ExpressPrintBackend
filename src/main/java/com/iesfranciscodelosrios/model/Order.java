@@ -2,6 +2,9 @@ package com.iesfranciscodelosrios.model;
 
 import javax.persistence.*;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serial;
@@ -24,6 +27,7 @@ public class Order implements Serializable {
     @Column(name = "order_date")
     private LocalDateTime orderDate;
     @JsonIgnoreProperties("userOrders")
+    @OnDelete(action = OnDeleteAction.NO_ACTION) //Meterlo en todos lados
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = User.class)
     @JoinColumn(name="id_user")
     private User user;
@@ -36,6 +40,7 @@ public class Order implements Serializable {
     @Column(name = "is_ready")
     private boolean isReady;
     
+    @JsonIgnoreProperties("orders")
     @JoinTable(name = "Discount_Order", joinColumns = @JoinColumn(name="id_order",nullable = false), 
     		inverseJoinColumns = @JoinColumn(name="id_discount", nullable = false), uniqueConstraints = {
     				@UniqueConstraint(columnNames = {"id_order","id_discount"})
