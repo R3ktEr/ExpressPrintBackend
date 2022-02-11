@@ -17,7 +17,7 @@ import java.util.Collections;
 public class SwaggerConfig {
     @Bean
     public Docket apiDocket() {
-        return new Docket(DocumentationType.SWAGGER_2).select().apis(RequestHandlerSelectors.basePackage("com.iesfranciscodelosrios.controller")).paths(PathSelectors.any()).build().apiInfo(getApiInfo());
+        return new Docket(DocumentationType.SWAGGER_2).groupName("ExpressPrint").select().apis(RequestHandlerSelectors.basePackage("com.iesfranciscodelosrios.controller")).paths(PathSelectors.any()).build().apiInfo(getApiInfo());
     }
 
     @Bean

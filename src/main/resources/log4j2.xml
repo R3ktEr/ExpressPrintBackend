@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Configuration>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %-50c{1.} - %msg %n"/>
+        </Console>
+        <File name="FileDiscount" filename="logs/services/DiscountService.log">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %-50c{1.} - %msg %n"/>
+        </File>
+        <File name="FileDocument" filename="logs/services/DocumentService.log">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %-50c{1.} - %msg %n"/>
+        </File>
+        <File name="FileOrder" filename="logs/services/OrderService.log">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %-50c{1.} - %msg %n"/>
+        </File>
+        <File name="FilePrice" filename="logs/services/PriceService.log">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %-50c{1.} - %msg %n"/>
+        </File>
+        <File name="FileUser" filename="logs/services/UserService.log">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %-50c{1.} - %msg %n"/>
+        </File>
+    </Appenders>
+    <Loggers>
+        <!-- Aquí estarían los loggers con las clases de las que lanzan excepciones?-->
+        <Logger name="com.iesfranciscodelosrios.services.DiscountService" level="info">
+            <AppenderRef ref="FileDiscount"/>
+        </Logger>
+        <Logger name="com.iesfranciscodelosrios.services.DocumentService" level="info">
+            <AppenderRef ref="FileDocument"/>
+        </Logger>
+        <Logger name="com.iesfranciscodelosrios.services.OrderService" level="info">
+            <AppenderRef ref="FileOrder"/>
+        </Logger>
+        <Logger name="com.iesfranciscodelosrios.services.PriceService" level="info">
+            <AppenderRef ref="FilePrice"/>
+        </Logger>
+        <Logger name="com.iesfranciscodelosrios.services.UserService" level="info">
+            <AppenderRef ref="FileUser"/>
+        </Logger>
+        <Root level="info">
+            <AppenderRef ref="Console"/>
+        </Root>
+    </Loggers>
+</Configuration>
