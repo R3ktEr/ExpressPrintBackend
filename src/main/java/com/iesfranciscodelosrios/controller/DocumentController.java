@@ -62,11 +62,12 @@ public class DocumentController {
 	@DeleteMapping("/{id_u}/{id_d}")
 	public HttpStatus deleteDocumentById(@PathVariable("id_u")Long id_u, @PathVariable("id_d")Long id_d) {
 		try {
+			System.out.println(id_d);
 			Document document = service.getDocumentById(id_d);
 			Long id_userdb = document.getOrder().getUser().getId();
 			
 			if(id_userdb.equals(id_u)) {
-				service.deleteDocumentById(id_u);				
+				service.deleteDocumentById(id_d);				
 				return HttpStatus.OK;
 			}else {
 				return HttpStatus.BAD_REQUEST;
@@ -74,7 +75,7 @@ public class DocumentController {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return HttpStatus.NOT_FOUND;
+			return HttpStatus.NOT_FOUND;				
 		}
 	}
 }

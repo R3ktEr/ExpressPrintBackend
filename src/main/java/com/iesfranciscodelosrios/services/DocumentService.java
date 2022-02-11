@@ -1,6 +1,7 @@
 package com.iesfranciscodelosrios.services;
 
 import com.iesfranciscodelosrios.model.Document;
+import com.iesfranciscodelosrios.model.Order;
 import com.iesfranciscodelosrios.repositories.DocumentRepository;
 
 import java.util.List;
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Service;
 public class DocumentService {
     @Autowired
     DocumentRepository documentRepository;
+    @Autowired
+    OrderService orderService;
 
     public List<Document> getAllDocuments() {
 		List<Document> documents=documentRepository.findAll();
@@ -25,7 +28,7 @@ public class DocumentService {
 			return document.get();
 		}else {
 			throw new Exception("El documento no existe");
-		}
+		}			
 	}
 	
 	public Document createOrUpdateDocument(Document document) {
@@ -50,13 +53,28 @@ public class DocumentService {
 				newDocument = documentRepository.save(newDocument);
 				return newDocument;
 			}else { //Insert
-				document.setId(null);
-				document=documentRepository.save(document);
-				return document;
+				//lanzar excepcion de not found
+				return new Document();
 			}
 		}else {
-			document=documentRepository.save(document);
-			return document;
+			Order o1=document.getOrder();
+			
+			try {
+				Order o2=orderService.getOrderById(o1.getId());
+				
+				if(o2.equals(o1)) {
+					document.setOrder(o2);
+					document=documentRepository.save(document);
+				}else {
+					document=new Document();
+				}
+				
+				return document;
+			} catch (Exception e) {
+				e.printStackTrace();
+				return new Document();
+			}
+			
 		}
 	}
 	
@@ -65,7 +83,7 @@ public class DocumentService {
 		if(document.isPresent()) {
 			documentRepository.deleteById(id);
 		}else {
-			throw new Exception("El documento no existe");
+			throw new Exception("El documento no se puede eliminar porque existe");
 		}
 	}
 }

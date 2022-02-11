@@ -30,8 +30,9 @@ public class User implements Serializable{
 	@Column(name="admin")
 	private boolean admin;
 	@JsonIgnoreProperties("user")
-	@OnDelete(action = OnDeleteAction.CASCADE)
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user", targetEntity = Order.class)
+	@OnDelete(action = OnDeleteAction.NO_ACTION)
+	@OneToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, 
+	fetch = FetchType.LAZY, mappedBy = "user", targetEntity = Order.class)
 	private List<Order> userOrders;
 
 	public User() {
