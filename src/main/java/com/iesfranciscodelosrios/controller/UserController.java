@@ -74,21 +74,6 @@ public class UserController {
 		return httpStatus;
 	}
 	
-	/*@GetMapping("/{id}")
-	public ResponseEntity<User> getUserById(@PathVariable("id")Long id){
-		User user;
-		HttpStatus httpStatus;
-		try{
-			user = service.findUserById(id);
-			System.out.println(user.getUserOrders());
-			httpStatus = HttpStatus.OK;
-		}catch (Exception e){
-			e.printStackTrace();
-			user = new User();
-			httpStatus = HttpStatus.NOT_FOUND;
-		}
-		return new ResponseEntity<>(user, new HttpHeaders(), httpStatus);
-	}*/
 	
 	
 	@GetMapping("/{mail}")

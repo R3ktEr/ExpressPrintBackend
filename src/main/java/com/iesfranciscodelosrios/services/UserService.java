@@ -6,6 +6,9 @@ import com.iesfranciscodelosrios.repositories.UserRepository;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,14 +16,16 @@ import org.springframework.stereotype.Service;
 public class UserService {
     @Autowired
     UserRepository userRepository;
-        
+    
+    private static final Logger logger= LogManager.getLogger(UserService.class);
+    
 	/**
 	 * 
 	 * @param user
 	 * @return devuelve un usuario nuevo o actualiza uno ya existente
 	 * @throws Exception
 	 */
-	public User createOrUpdateUser(User user)throws Exception{
+	public User createOrUpdateUser(User user){
 		if(user.getId()!=null && user.getId()>0) {
 			Optional<User> n=  userRepository.findById(user.getId());
 			if(n.isPresent()) {
@@ -51,6 +56,7 @@ public class UserService {
 		if(!result.isEmpty()) {
 			return result;
 		}else {
+			logger.info("No hay usuarios registrados");
 			throw  new Exception("No hay usuarios registrados") ;
 		}
 		
@@ -58,21 +64,6 @@ public class UserService {
 		
 	}
 	
-	/**
-	 * 
-	 * @param Id
-	 * @return devuelve el usuario que coincida con el id
-	 * @throws Exception devuelve mensaje de error en caso de que no exista
-	 */
-	/*public User findUserById(Long Id)throws Exception{
-		Optional<User> user=userRepository.findById(Id);
-		if(user.isPresent()) {
-			return user.get();
-		}else{
-			throw  new Exception("Usuario no encontrado") ;
-		}
-	
-	}*/
 	
 	/**
 	 * 
@@ -85,6 +76,7 @@ public class UserService {
 		if(user.isPresent()) {
 			return user.get();
 		}else{
+			logger.info("Usuario con correo: "+mail+" no encontrado");
 			throw  new Exception("Usuario no encontrado") ;
 		}
 	
@@ -101,6 +93,8 @@ public class UserService {
 		if(user.isPresent()) {
 			userRepository.deleteById(id);
 		}else {
+			logger.info("Usuario con id: "+id+" no encontrado");
+
 			throw  new Exception("Usuario no encontrado") ;
 		}
 	}
