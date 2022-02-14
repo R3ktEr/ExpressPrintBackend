@@ -2,6 +2,9 @@ package com.iesfranciscodelosrios.model;
 
 import javax.persistence.*;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serial;
@@ -31,7 +34,9 @@ public class Discount implements Serializable {
     private boolean isFixed;
     
     @JsonIgnoreProperties("discounts")
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "discounts", targetEntity = Order.class)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, 
+    fetch = FetchType.EAGER, mappedBy = "discounts", targetEntity = Order.class)
     private List<Order> orders;
 
     public Discount() {

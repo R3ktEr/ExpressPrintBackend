@@ -41,11 +41,12 @@ public class Order implements Serializable {
     private boolean isReady;
     
     @JsonIgnoreProperties("orders")
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
     @JoinTable(name = "Discount_Order", joinColumns = @JoinColumn(name="id_order",nullable = false), 
     		inverseJoinColumns = @JoinColumn(name="id_discount", nullable = false), uniqueConstraints = {
     				@UniqueConstraint(columnNames = {"id_order","id_discount"})
     		})
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = Discount.class)
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.LAZY, targetEntity = Discount.class)
     private List<Discount> discounts;
     
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = Document.class)
