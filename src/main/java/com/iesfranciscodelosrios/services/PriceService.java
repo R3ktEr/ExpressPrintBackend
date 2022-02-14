@@ -104,7 +104,7 @@ public class PriceService {
         List<Object> impressions = null;
         List<Object> sizes = null;
         List<Object> thicknessS = null;
-        Object copy = null;
+        List<Object> copy = null;
         LinkedHashMap<String, Object> map = new LinkedHashMap<>();
         for (Product p : values) {
             if(p instanceof Color){
@@ -112,6 +112,7 @@ public class PriceService {
                 if(colors == null)
                     colors = new ArrayList<>();
                 LinkedHashMap<String, Object> color = new LinkedHashMap<>();
+                color.put("id", c.getId());
                 color.put("price", c.getPrice());
                 color.put("isColor", c.isColor());
                 colors.add(color);
@@ -120,6 +121,7 @@ public class PriceService {
                 if(endeds == null)
                     endeds = new ArrayList<>();
                 LinkedHashMap<String, Object> ended = new LinkedHashMap<>();
+                ended.put("id", e.getId());
                 ended.put("price", e.getPrice());
                 ended.put("endedType", e.getEndedType().toString());
                 endeds.add(ended);
@@ -128,6 +130,7 @@ public class PriceService {
                 if(impressions == null)
                     impressions = new ArrayList<>();
                 LinkedHashMap<String, Object> impression = new LinkedHashMap<>();
+                impression.put("id", i.getId());
                 impression.put("price", i.getPrice());
                 impression.put("impressionsTypes", i.getImpressionsTypes().toString());
                 impressions.add(impression);
@@ -136,6 +139,7 @@ public class PriceService {
                 if(sizes == null)
                     sizes = new ArrayList<>();
                 LinkedHashMap<String, Object> size = new LinkedHashMap<>();
+                size.put("id", s.getId());
                 size.put("price", s.getPrice());
                 size.put("sheetSize", s.getSizeSheet().toString());
                 size.put("sizeOfSheet", s.getSheetSize());
@@ -145,16 +149,19 @@ public class PriceService {
                 if(thicknessS == null)
                     thicknessS = new ArrayList<>();
                 LinkedHashMap<String, Object> thickness = new LinkedHashMap<>();
+                thickness.put("id", t.getId());
                 thickness.put("price", t.getPrice());
                 thickness.put("thicknessType", t.getThicknessType().toString());
                 thickness.put("description", t.getDescription());
                 thicknessS.add(thickness);
             }else if(p instanceof Copy){
                 Copy c = (Copy) p;
-                LinkedHashMap<String, Float> copymap = new LinkedHashMap<>();
-                copymap.put("price", c.getPrice());
                 if(copy == null)
-                    copy = copymap;
+                	copy = new ArrayList<>();
+                LinkedHashMap<String, Object> copymap = new LinkedHashMap<>();
+                copymap.put("id", c.getId());
+                copymap.put("price", c.getPrice());
+                copy.add(copymap);
             }
         }
         map.put("Color", colors);

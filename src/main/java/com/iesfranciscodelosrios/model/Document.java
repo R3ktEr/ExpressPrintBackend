@@ -5,6 +5,10 @@ import java.io.Serializable;
 
 import javax.persistence.*;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.iesfranciscodelosrios.model.price.*;
 
 @Entity
@@ -39,7 +43,9 @@ public class Document implements Serializable{
 	@Column(name="ringedPosition") 
 	private boolean ringedPosition; //Layout of the ringed. True vertical, false horizontal
 	
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = Order.class)
+	@JsonIgnoreProperties("documents")
+	@OnDelete(action = OnDeleteAction.NO_ACTION)
+	@ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER, targetEntity = Order.class)
 	private Order order;
 	
 	@Column(name="comment")

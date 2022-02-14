@@ -28,7 +28,7 @@ public class Order implements Serializable {
     private LocalDateTime orderDate;
     @JsonIgnoreProperties("userOrders")
     @OnDelete(action = OnDeleteAction.NO_ACTION) //Meterlo en todos lados
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = User.class)
+    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER, targetEntity = User.class)
     @JoinColumn(name="id_user")
     private User user;
     @Column(name = "is_Payed")
