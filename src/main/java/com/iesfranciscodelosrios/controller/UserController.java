@@ -67,9 +67,12 @@ public class UserController {
 		try{
 			service.deleteUserById(id);
 			httpStatus = HttpStatus.OK;
-		}catch (Exception e){
+		}catch (IllegalArgumentException e){
+			e.printStackTrace();		
+			httpStatus = HttpStatus.FORBIDDEN;	
+		}catch(Exception e) {
 			e.printStackTrace();
-			httpStatus = HttpStatus.NOT_FOUND;
+			httpStatus = HttpStatus.NOT_FOUND;				
 		}
 		return httpStatus;
 	}

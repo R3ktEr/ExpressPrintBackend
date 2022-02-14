@@ -1,5 +1,6 @@
 package com.iesfranciscodelosrios.services;
 
+import com.iesfranciscodelosrios.model.Discount;
 import com.iesfranciscodelosrios.model.Order;
 import com.iesfranciscodelosrios.model.User;
 import com.iesfranciscodelosrios.repositories.OrderRepository;
@@ -26,13 +27,23 @@ public class OrderService {
 
     public List<Order> getAllOrder() {
 		List<Order> orders=orderRepository.findAll();
+		List<Discount> discounts=discountService.getAllDiscounts();
+		
+		//Para que me traiga la lista de descuentos actualizada 
+		for (Order order : orders) {
+			order.setDiscounts(discounts);
+		}
+		
 		return orders;
 	}
 	
 	public Order getOrderById(Long id) throws Exception {
 		Optional<Order> order=orderRepository.findById(id);
 		if(order.isPresent()) {
-			return order.get();
+			//Para que me traiga la lista de descuentos actualizada 
+			Order o=order.get();
+			o.setDiscounts(discountService.getAllDiscounts());
+			return o;
 		}else {
 			logger.info("El pedido con id "+id+"no existe");
 			throw new Exception("El pedido con id "+id+"no existe");

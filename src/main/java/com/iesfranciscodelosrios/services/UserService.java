@@ -57,7 +57,7 @@ public class UserService {
 			return result;
 		}else {
 			logger.info("No hay usuarios registrados");
-			throw  new Exception("No hay usuarios registrados") ;
+			throw new Exception("No hay usuarios registrados") ;
 		}
 		
 		
@@ -77,7 +77,7 @@ public class UserService {
 			return user.get();
 		}else{
 			logger.info("Usuario con correo: "+mail+" no encontrado");
-			throw  new Exception("Usuario no encontrado") ;
+			throw new Exception("Usuario no encontrado") ;
 		}
 	
 	}
@@ -88,14 +88,20 @@ public class UserService {
 	 * @param id Elimina de la base de datos al usuario cuyo id coincida con el de la busqueda
 	 * @throws Exception devuelve mensaje de error en caso de que no exista
 	 */
-	public void deleteUserById(Long id)throws Exception	{
+	public void deleteUserById(Long id)throws Exception, IllegalArgumentException {
 		Optional<User> user=userRepository.findById(id);
 		if(user.isPresent()) {
-			userRepository.deleteById(id);
+			try {
+				userRepository.deleteById(id);				
+			}catch(Exception e) {
+				logger.info("El usuario no se puede borrar");
+
+				throw new IllegalArgumentException("Este usuario no se puede borrar") ;
+			}
 		}else {
 			logger.info("Usuario con id: "+id+" no encontrado");
 
-			throw  new Exception("Usuario no encontrado") ;
+			throw new Exception("Usuario no encontrado") ;
 		}
 	}
 }
