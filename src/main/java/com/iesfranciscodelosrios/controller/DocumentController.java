@@ -55,8 +55,18 @@ public class DocumentController {
 	
 	@RequestMapping(method = {RequestMethod.POST, RequestMethod.PUT})
 	public ResponseEntity<Document> createOrUpdateDocument(@RequestBody Document d){
-		Document document=service.createOrUpdateDocument(d);
-		return new ResponseEntity<Document>(document, new HttpHeaders(), HttpStatus.OK);
+		HttpStatus httpstatus;
+		
+		Document document;
+		try {
+			document = service.createOrUpdateDocument(d);
+			httpstatus=HttpStatus.OK;
+		} catch (Exception e) {
+			document=new Document();
+			httpstatus=HttpStatus.NOT_FOUND;
+			e.printStackTrace();
+		}
+		return new ResponseEntity<Document>(document, new HttpHeaders(), httpstatus);
 	}
 	
 	@DeleteMapping("/{id_u}/{id_d}")
@@ -73,7 +83,6 @@ public class DocumentController {
 				return HttpStatus.BAD_REQUEST;
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return HttpStatus.NOT_FOUND;				
 		}
