@@ -75,8 +75,17 @@ public class OrderController {
 	
 	@RequestMapping(method = {RequestMethod.POST, RequestMethod.PUT})
 	public ResponseEntity<Order> createOrUpdateOrder(@RequestBody Order o){
-		Order order=orderService.createOrUpdateOrder(o);
-		return new ResponseEntity<Order>(order, new HttpHeaders(), HttpStatus.OK);
+		HttpStatus httpstatus;
+		Order order;
+		try {
+			order = orderService.createOrUpdateOrder(o);
+			httpstatus=HttpStatus.OK;
+		} catch (Exception e) {
+			order=new Order();
+			httpstatus=HttpStatus.NOT_FOUND;
+			e.printStackTrace();
+		}
+		return new ResponseEntity<Order>(order, new HttpHeaders(), httpstatus);
 	}
 	
 	

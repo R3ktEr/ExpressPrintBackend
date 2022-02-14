@@ -18,7 +18,7 @@ public class Discount implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-    @Column(name="name", nullable = false, unique = true)
+    @Column(name="name")
     private String name;
     //null si "isFixed" es true
     @Column(name="percentage")

@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,8 @@ public class OrderService {
     DiscountService discountService;
     @Autowired
     UserService userService;
+    
+    private static final Logger logger = LogManager.getLogger(OrderService.class);
 
     public List<Order> getAllOrder() {
 		List<Order> orders=orderRepository.findAll();
@@ -30,7 +34,8 @@ public class OrderService {
 		if(order.isPresent()) {
 			return order.get();
 		}else {
-			throw new Exception("El pedido no existe");
+			logger.info("El pedido con id "+id+"no existe");
+			throw new Exception("El pedido con id "+id+"no existe");
 		}
 	}
 	
@@ -39,11 +44,12 @@ public class OrderService {
 		if(!orders.isEmpty()) {
 			return orders;
 		}else {
+			logger.info("El usuario no tiene pedidos");
 			throw new Exception("El usuario no tiene pedidos");
 		}
 	}
 	
-	public Order createOrUpdateOrder(Order order) {
+	public Order createOrUpdateOrder(Order order) throws Exception {
 		if(order.getId()!=null && order.getId()>0) {
 			Optional<Order> o=orderRepository.findById(order.getId());
 			if(o.isPresent()) { //Update
@@ -60,8 +66,8 @@ public class OrderService {
 				newOrder = orderRepository.save(newOrder);
 				return newOrder;
 			}else {
-				//lanzar excepcion de not found
-				return new Order();
+				logger.info("El pedido con id "+order.getId()+"no existe");
+				throw new Exception("El pedido con id "+order.getId()+"no existe");
 			}
 		}else { //Insert
 			order.setId(null);
@@ -79,13 +85,14 @@ public class OrderService {
 					order.setUser(u2);
 					order=orderRepository.save(order);			
 				}else {
-					order=new Order();
+					logger.info("El usuario del pedido no es el mismo que el de la base de datos");
+					throw new Exception("El usuario del pedido no es el mismo que el de la base de datos");
 				}
 				
 				return order;
 			} catch (Exception e) {
-				e.printStackTrace();
-				return new Order();
+				logger.info("El usuario asociado al pedido no existe");
+				throw new Exception("El usuario asociado al pedido no existe");
 			}
 		}
 		
@@ -96,6 +103,7 @@ public class OrderService {
 		if(order.isPresent()) {
 			orderRepository.deleteById(id);
 		}else {
+			logger.info("El pedidio no existe");
 			throw new Exception("El pedido no existe");
 		}
 	}
