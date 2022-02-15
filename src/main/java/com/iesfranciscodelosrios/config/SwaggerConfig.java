@@ -18,21 +18,21 @@ public class SwaggerConfig {
     @Bean
     public Docket apiDocket() {
         return new Docket(DocumentationType.SWAGGER_2).groupName("ExpressPrint")
-        		.select()
-        		.apis(RequestHandlerSelectors.basePackage("com.iesfranciscodelosrios.controller"))
-        		.paths(PathSelectors.any()).build()
-        		.apiInfo(getApiInfo());
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("com.iesfranciscodelosrios.controller"))
+                .paths(PathSelectors.any()).build()
+                .apiInfo(getApiInfo());
     }
 
     @Bean
     public ApiInfo getApiInfo() {
-        return new ApiInfo("Expressprint Api", 
-        		"A RestFul api for the Expressprint aplication developed in SpringBoot", 
-        		"1.0.0", "https://es-es.facebook.com/imprentasantamarina/", new Contact("Alvaro", 
-        		"https://google.es", "alvaro_beta@hotmail.com"), 
-        		"License", "URL_Licencia", 
-        		Collections.emptyList()
-        		);
+        return new ApiInfo("Expressprint Api",
+                "A RestFul api for the Expressprint aplication developed in SpringBoot",
+                "1.0.0", "https://es-es.facebook.com/imprentasantamarina/", new Contact("Alvaro",
+                "https://google.es", "alvaro_beta@hotmail.com"),
+                "License", "URL_Licencia",
+                Collections.emptyList()
+        );
     }
 }
 

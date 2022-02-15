@@ -1,6 +1,7 @@
 package com.iesfranciscodelosrios.model.price;
 
 import com.fasterxml.jackson.annotation.JsonRootName;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,6 +15,7 @@ public class Color extends Product implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
+    @ApiModelProperty(value = "True si es a color, false si es en blanco y negro", name = "isColor", required = true, example = "true")
     @Column(name = "is_color")
     private boolean isColor;
 

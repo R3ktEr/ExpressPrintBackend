@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 public interface ThicknessRepository extends JpaRepository<Thickness, Long> {
-    @Query(nativeQuery = true, value = "SELECT id, price, valid, thickness_type, description FROM thickness WHERE thickness_type=?1 AND valid=true ORDER BY id DESC")
-    Thickness getLatestThickness(int thicknessType);
+    @Query("SELECT t FROM Thickness t WHERE t.thicknessType=?1 AND t.valid=true ORDER BY t.id DESC")
+    Thickness getLatestThickness(Enums.ThicknessType thicknessType);
 }

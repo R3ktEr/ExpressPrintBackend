@@ -1,14 +1,20 @@
 package com.iesfranciscodelosrios.services;
 
 import com.iesfranciscodelosrios.model.price.*;
+import com.iesfranciscodelosrios.repositories.QueryEnums;
 import com.iesfranciscodelosrios.repositories.price.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import java.math.BigInteger;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.*;
 
 @Service
 public class PriceService {
@@ -24,25 +30,108 @@ public class PriceService {
     SizeRepository sizeRepository;
     @Autowired
     ThicknessRepository thicknessRepository;
+    @Autowired
+    ChangePriceService changePriceService;
+    @Autowired
+    FormatDataPriceService formatDataPriceService;
+    @PersistenceContext
+    private EntityManager em;
 
-    public List<Object> getAllPrices() {
+    private static final Logger LOGGER = LogManager.getLogger(PriceService.class);
+
+    public List<Object> getAllPricesValidated() {
         List<Product> result = new ArrayList<>();
         result.add(colorRepository.getColorPrice(false));
         result.add(colorRepository.getColorPrice(true));
         result.add(copyRepository.getLatestCopy());
         for (Enums.EndedType e : Enums.EndedType.values()) {
-            result.add(endedRepository.getLatestEnded(e.getICode()));
+            result.add(endedRepository.getLatestEnded(e));
         }
         for (Enums.ImpressionsTypes e : Enums.ImpressionsTypes.values()) {
-            result.add(impressionPerSideRepository.getLatestImpressionPerSide(e.getICode()));
+            result.add(impressionPerSideRepository.getLatestImpressionPerSide(e));
         }
         for (Enums.sheetSize e : Enums.sheetSize.values()) {
-            result.add(sizeRepository.getLatestSize(e.getICode()));
+            result.add(sizeRepository.getLatestSize(e));
         }
         for (Enums.ThicknessType e : Enums.ThicknessType.values()) {
-            result.add(thicknessRepository.getLatestThickness(e.getICode()));
+            result.add(thicknessRepository.getLatestThickness(e));
         }
-        return sendFormattedDataToController(result);
+        LOGGER.info("Se ha recuperado la lista de los precios vigentes");
+        return formatDataPriceService.sendFormattedDataToController(result);
+    }
+
+    public List<Object> getAllHistoricalPrices(int offSet) {
+        List<Product> result = new ArrayList<>();
+        Query historicalPrices = em.createNativeQuery(QueryEnums.historicalOffSet.getQuery());
+        historicalPrices.setParameter(1, Math.max(offSet, 0));
+        List<Object> queryResult = (List<Object>) historicalPrices.getResultList();
+        for (Object o : queryResult) {
+            Object[] columns = (Object[]) o;
+            String type = (String) columns[0];
+            Long id = ((BigInteger) columns[1]).longValue();
+            Float price = (Float) columns[2];
+            Boolean isValid = (Boolean) columns[3];
+            LocalDate date = new java.util.Date(((Date) columns[4]).getTime()).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            switch (type) {
+                case "color" -> {
+                    Color c = new Color();
+                    c.setId(id);
+                    c.setPrice(price);
+                    c.setValid(isValid);
+                    c.setDate(date);
+                    c.setColor((Boolean) columns[5]);
+                    result.add(c);
+                }
+                case "copy" -> {
+                    Copy c = new Copy();
+                    c.setId(id);
+                    c.setPrice(price);
+                    c.setDate(date);
+                    c.setValid(isValid);
+                    result.add(c);
+                }
+                case "ended" -> {
+                    Ended e = new Ended();
+                    e.setId(id);
+                    e.setPrice(price);
+                    e.setDate(date);
+                    e.setValid(isValid);
+                    e.setEndedType(Enums.EndedType.values()[(Integer) columns[6]]);
+                    result.add(e);
+                }
+                case "impressionperside" -> {
+                    ImpressionPerSide i = new ImpressionPerSide();
+                    i.setId(id);
+                    i.setPrice(price);
+                    i.setDate(date);
+                    i.setValid(isValid);
+                    i.setImpressionsTypes(Enums.ImpressionsTypes.values()[(Integer) columns[7]]);
+                    result.add(i);
+                }
+                case "size" -> {
+                    Size s = new Size();
+                    s.setId(id);
+                    s.setPrice(price);
+                    s.setDate(date);
+                    s.setValid(isValid);
+                    s.setSizeSheet(Enums.sheetSize.values()[(Integer) columns[8]]);
+                    s.setSheetSize((String) columns[9]);
+                    result.add(s);
+                }
+                case "thickness" -> {
+                    Thickness t = new Thickness();
+                    t.setId(id);
+                    t.setPrice(price);
+                    t.setDate(date);
+                    t.setValid(isValid);
+                    t.setDescription((String) columns[10]);
+                    t.setThicknessType(Enums.ThicknessType.values()[(Integer) columns[11]]);
+                    result.add(t);
+                }
+            }
+        }
+        LOGGER.info("Se ha procesado correctamente una petición al historial de precios");
+        return formatDataPriceService.sendFormattedDataHistoryToController(result);
     }
 
     public List<Object> changeAllPrices(List<Object> newValues) {
@@ -57,180 +146,53 @@ public class PriceService {
                         List<Object> colorList = (List<Object>) value;
                         for (Object color : colorList) {
                             LinkedHashMap<String, Object> colormap = (LinkedHashMap<String, Object>) color;
-                            result.add(changeColorPrice((Boolean) colormap.get("isColor"), (float) ((Double) colormap.get("price")).doubleValue()));
+                            result.add(changePriceService.changeColorPrice((Boolean) colormap.get("isColor"), (float) ((Double) colormap.get("price")).doubleValue()));
+                            LOGGER.info("Se ha modificado el precio del " + ((Boolean) colormap.get("isColor") ? "Color" : "Blanco y Negro") + " a " + (float) ((Double) colormap.get("price")).doubleValue());
                         }
                     }
                     case "Copy" -> {
                         LinkedHashMap<String, Object> copymap = (LinkedHashMap<String, Object>) value;
-                        result.add(changeCopyPrice((float) ((Double) copymap.get("price")).doubleValue()));
+                        result.add(changePriceService.changeCopyPrice((float) ((Double) copymap.get("price")).doubleValue()));
+                        LOGGER.info("Se ha modificado el precio de la copia a " + (float) ((Double) copymap.get("price")).doubleValue());
                     }
                     case "Ended" -> {
                         List<Object> endedList = (List<Object>) value;
                         for (Object ended : endedList) {
                             LinkedHashMap<String, Object> endedmap = (LinkedHashMap<String, Object>) ended;
-                            result.add(changeEndedPrice(Enums.EndedType.valueOf(endedmap.get("endedType").toString()), (float) ((Double) endedmap.get("price")).doubleValue()));
+                            result.add(changePriceService.changeEndedPrice(Enums.EndedType.valueOf(endedmap.get("endedType").toString()), (float) ((Double) endedmap.get("price")).doubleValue()));
+                            LOGGER.info("Se ha modificado el precio del acabado " + Enums.EndedType.valueOf(endedmap.get("endedType").toString()) + " a " + (float) ((Double) endedmap.get("price")).doubleValue());
                         }
                     }
                     case "ImpressionPerSide" -> {
                         List<Object> impressionList = (List<Object>) value;
                         for (Object impression : impressionList) {
                             LinkedHashMap<String, Object> impressionmap = (LinkedHashMap<String, Object>) impression;
-                            result.add(changeImpressionPrice(Enums.ImpressionsTypes.valueOf(impressionmap.get("impressionsTypes").toString()), (float) ((Double) impressionmap.get("price")).doubleValue()));
+                            result.add(changePriceService.changeImpressionPrice(Enums.ImpressionsTypes.valueOf(impressionmap.get("impressionsTypes").toString()), (float) ((Double) impressionmap.get("price")).doubleValue()));
+                            LOGGER.info("Se ha modificado el precio del tipo de impressión " + Enums.ImpressionsTypes.valueOf(impressionmap.get("impressionsTypes").toString()) + " a " + (float) ((Double) impressionmap.get("price")).doubleValue());
+
                         }
                     }
                     case "Size" -> {
                         List<Object> sizeList = (List<Object>) value;
                         for (Object size : sizeList) {
                             LinkedHashMap<String, Object> sizemap = (LinkedHashMap<String, Object>) size;
-                            result.add(changeSizePrice(Enums.sheetSize.valueOf(sizemap.get("sheetSize").toString()), sizemap.get("sheetSize").toString(), (float) ((Double) sizemap.get("price")).doubleValue()));
+                            result.add(changePriceService.changeSizePrice(Enums.sheetSize.valueOf(sizemap.get("sheetSize").toString()), sizemap.get("sheetSize").toString(), (float) ((Double) sizemap.get("price")).doubleValue()));
+                            LOGGER.info("Se ha modificado un precio del tamaño " + Enums.sheetSize.valueOf(sizemap.get("sheetSize").toString()) + " a " + (float) ((Double) sizemap.get("price")).doubleValue());
                         }
                     }
                     case "Thickness" -> {
                         List<Object> thicknessList = (List<Object>) value;
                         for (Object thickness : thicknessList) {
                             LinkedHashMap<String, Object> thicknessmap = (LinkedHashMap<String, Object>) thickness;
-                            result.add(changeThicknessPrice(Enums.ThicknessType.valueOf(thicknessmap.get("thicknessType").toString()), thicknessmap.get("description").toString(), (float) ((Double) thicknessmap.get("price")).doubleValue()));
+                            result.add(changePriceService.changeThicknessPrice(Enums.ThicknessType.valueOf(thicknessmap.get("thicknessType").toString()), thicknessmap.get("description").toString(), (float) ((Double) thicknessmap.get("price")).doubleValue()));
+                            LOGGER.info("Se ha modificado un precio del grosor " + Enums.ThicknessType.valueOf(thicknessmap.get("thicknessType").toString()) + " a " + (float) ((Double) thicknessmap.get("price")).doubleValue());
                         }
                     }
                 }
             }
         }
-        return sendFormattedDataToController(result);
-    }
-
-    private List<Object> sendFormattedDataToController(List<Product> values) {
-        List<Object> colors = null;
-        List<Object> endeds = null;
-        List<Object> impressions = null;
-        List<Object> sizes = null;
-        List<Object> thicknessS = null;
-        List<Object> copy = null;
-        LinkedHashMap<String, Object> map = new LinkedHashMap<>();
-        for (Product p : values) {
-            if(p instanceof Color){
-                Color c = (Color) p;
-                if(colors == null)
-                    colors = new ArrayList<>();
-                LinkedHashMap<String, Object> color = new LinkedHashMap<>();
-                color.put("id", c.getId());
-                color.put("price", c.getPrice());
-                color.put("isColor", c.isColor());
-                colors.add(color);
-            }else if(p instanceof Ended){
-                Ended e = (Ended) p;
-                if(endeds == null)
-                    endeds = new ArrayList<>();
-                LinkedHashMap<String, Object> ended = new LinkedHashMap<>();
-                ended.put("id", e.getId());
-                ended.put("price", e.getPrice());
-                ended.put("endedType", e.getEndedType().toString());
-                endeds.add(ended);
-            }else if(p instanceof ImpressionPerSide){
-                ImpressionPerSide i = (ImpressionPerSide) p;
-                if(impressions == null)
-                    impressions = new ArrayList<>();
-                LinkedHashMap<String, Object> impression = new LinkedHashMap<>();
-                impression.put("id", i.getId());
-                impression.put("price", i.getPrice());
-                impression.put("impressionsTypes", i.getImpressionsTypes().toString());
-                impressions.add(impression);
-            }else if(p instanceof Size){
-                Size s = (Size) p;
-                if(sizes == null)
-                    sizes = new ArrayList<>();
-                LinkedHashMap<String, Object> size = new LinkedHashMap<>();
-                size.put("id", s.getId());
-                size.put("price", s.getPrice());
-                size.put("sheetSize", s.getSizeSheet().toString());
-                size.put("sizeOfSheet", s.getSheetSize());
-                sizes.add(size);
-            }else if(p instanceof Thickness){
-                Thickness t = (Thickness) p;
-                if(thicknessS == null)
-                    thicknessS = new ArrayList<>();
-                LinkedHashMap<String, Object> thickness = new LinkedHashMap<>();
-                thickness.put("id", t.getId());
-                thickness.put("price", t.getPrice());
-                thickness.put("thicknessType", t.getThicknessType().toString());
-                thickness.put("description", t.getDescription());
-                thicknessS.add(thickness);
-            }else if(p instanceof Copy){
-                Copy c = (Copy) p;
-                if(copy == null)
-                	copy = new ArrayList<>();
-                LinkedHashMap<String, Object> copymap = new LinkedHashMap<>();
-                copymap.put("id", c.getId());
-                copymap.put("price", c.getPrice());
-                copy.add(copymap);
-            }
-        }
-        map.put("Color", colors);
-        map.put("Copy", copy);
-        map.put("Endeds", endeds);
-        map.put("ImpressionPerSide", impressions);
-        map.put("Sizes", sizes);
-        map.put("Thickness", thicknessS);
-        return List.of(map);
-    }
-
-    private Color changeColorPrice(boolean isColor, float newPrice) {
-        Color c = colorRepository.getColorPrice(isColor);
-        if (c != null) {
-            c.setValid(false);
-            colorRepository.save(c);
-        }
-        Color color = new Color(newPrice, isColor, true);
-        return colorRepository.save(color);
-    }
-
-    private Copy changeCopyPrice(float newPrice) {
-        Copy c = copyRepository.getLatestCopy();
-        if (c != null) {
-            c.setValid(false);
-            copyRepository.save(c);
-        }
-        Copy copy = new Copy(newPrice, true);
-        return copyRepository.save(copy);
-    }
-
-    private Ended changeEndedPrice(Enums.EndedType endedType, float newPrice) {
-        Ended e = endedRepository.getLatestEnded(endedType.getICode());
-        if (e != null) {
-            e.setValid(false);
-            endedRepository.save(e);
-        }
-        Ended ended = new Ended(endedType, newPrice, true);
-        return endedRepository.save(ended);
-    }
-
-    private ImpressionPerSide changeImpressionPrice(Enums.ImpressionsTypes impressionsTypes, float newPrice) {
-        ImpressionPerSide ips = impressionPerSideRepository.getLatestImpressionPerSide(impressionsTypes.getICode());
-        if (ips != null) {
-            ips.setValid(false);
-            impressionPerSideRepository.save(ips);
-        }
-        ImpressionPerSide impressionPerSide = new ImpressionPerSide(impressionsTypes, newPrice, true);
-        return impressionPerSideRepository.save(impressionPerSide);
-    }
-
-    private Size changeSizePrice(Enums.sheetSize sheetSize, String sizeOfSheet, float newPrice) {
-        Size s = sizeRepository.getLatestSize(sheetSize.getICode());
-        if (s != null) {
-            s.setValid(false);
-            sizeRepository.save(s);
-        }
-        Size size = new Size(sheetSize, sizeOfSheet, newPrice, true);
-        return sizeRepository.save(size);
-    }
-
-    private Thickness changeThicknessPrice(Enums.ThicknessType thicknessType, String description, float newPrice) {
-        Thickness t = thicknessRepository.getLatestThickness(thicknessType.getICode());
-        if (t != null) {
-            t.setValid(false);
-            thicknessRepository.save(t);
-        }
-        Thickness thickness = new Thickness(thicknessType, description, newPrice, true);
-        return thicknessRepository.save(thickness);
+        LOGGER.info("Se han modificado los precios de los elementos anteriormetne loggeados");
+        return formatDataPriceService.sendFormattedDataToController(result);
     }
 
 }
