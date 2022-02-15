@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.iesfranciscodelosrios.model.Discount;
 import com.iesfranciscodelosrios.services.DiscountService;
 
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -30,19 +31,18 @@ public class DiscountController {
 	DiscountService service;
 
 	private static final Logger logger = LogManager.getLogger();
-
 	@ApiOperation(value = "getAllDiscounts", notes = "returns all discounts")
-	@ApiResponse(code = 200, message = "OK.  resource is fetched successfully")
+	@ApiResponse(code = 200, message = "OK.  resource is fetched successfully",response=List.class)
 	@GetMapping
 	public ResponseEntity<List<Discount>> getAllDiscounts() {
 		List<Discount> discounts = service.getAllDiscounts();
 		return new ResponseEntity<List<Discount>>(discounts, new HttpHeaders(), HttpStatus.OK);
 	}
 	
-	
+	@ApiModelProperty(notes = "Discount id",name="id_d",required=true,value="1")
 	@ApiOperation(value = "getDiscountById", notes = "return a discount by id")
 	@ApiResponses(value= {
-			@ApiResponse(code = 200, message = "OK. resource is fetched successfully"),
+			@ApiResponse(code = 200, message = "OK. resource is fetched successfully",response=Discount.class),
 			@ApiResponse(code = 400, message = "BAD_REQUEST"),
 			@ApiResponse(code = 404, message = "NOT_FOUND. The discount has not been found"),
 	})
@@ -78,12 +78,13 @@ public class DiscountController {
 		return new ResponseEntity<Discount>(discount, new HttpHeaders(), HttpStatus.OK);
 	}
 	
-	@ApiOperation(value = "deleteDiscountById", notes = "Delete a discount by id")
+	@ApiModelProperty(notes = "Delete a discount by id",name="id_d",required=true,value="1")
+	@ApiOperation(value = "deleteDiscountById", notes = "return a discount by id")
 	@ApiResponses(value= {
-			@ApiResponse(code = 200, message = "OK. resource is fetched successfully"),
+			@ApiResponse(code = 200, message = "OK. resource is deleted successfully",response=Discount.class),
 			@ApiResponse(code = 400, message = "BAD_REQUEST"),
 			@ApiResponse(code = 404, message = "NOT_FOUND. The discount has not been found"),
-	})	
+	})
 	@DeleteMapping("/{id_d}")
 	public HttpStatus deleteDiscountById(@PathVariable("id_d") Long id_d) {
 		try {
