@@ -7,6 +7,8 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -18,25 +20,34 @@ import java.util.Objects;
 public class Order implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ApiModelProperty(value = "Id del pedido",name="id", dataType = "Long", required=false,example="1")
     @Column(name = "id")
     private Long id;
+    @ApiModelProperty(value = "Fecha de recogida",name="pickupDate",dataType = "LocalDateTime",required=false,example="2022-06-19T19:23:03")
     @Column(name = "pickup_Date")
     private LocalDateTime pickupDate;
+    @ApiModelProperty(value = "Fecha del pedido",name="orderDate",dataType = "LocalDateTime",required=false,example="2022-06-19T19:23:03")
     @Column(name = "order_date")
     private LocalDateTime orderDate;
     @JsonIgnoreProperties("userOrders")
-    @OnDelete(action = OnDeleteAction.NO_ACTION) //Meterlo en todos lados
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
     @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER, targetEntity = User.class)
+    @ApiModelProperty(value = "Id del usuario",name="user",dataType = "User" ,required=true)
     @JoinColumn(name="id_user")
     private User user;
+    @ApiModelProperty(value = "Indica si el pedido esta pagado",name="isPayed",dataType = "boolean",required=false,example="false")
     @Column(name = "is_Payed")
     private boolean isPayed;
+    @ApiModelProperty(value = "Indica si el pedido se ha recogido",name="isPickedUp",dataType = "boolean",required=false,example="false")
     @Column(name = "is_Picked_Up")
     private boolean isPickedUp;
+    @ApiModelProperty(value = "Precio final del pedido",name="finalPrice",dataType = "double",required=false,example="0.0")
     @Column(name = "final_Price")
     private double finalPrice;
+    @ApiModelProperty(value = "Indica si el pedido esta listo para ser recogido",name="isReady",dataType = "boolean",required=false,example="false")
     @Column(name = "is_ready")
     private boolean isReady;
     
