@@ -22,7 +22,7 @@ public class SwaggerConfig {
 
     @Bean
     public ApiInfo getApiInfo() {
-        return new ApiInfo("Notes Api Alvaro", "A sample of RestFul api developed in SpringBoot", "1.0.0", "https://google.es/", new Contact("Alvaro", "https://google.es", "alvaro_beta@hotmail.com"), "License", "URL_Licencia", Collections.emptyList());
+        return new ApiInfo("ExpressPrint Api", "RestFul Api developed in SpringBoot", "1.0.0", "https://github.com/R3ktEr/ExpressPrintBackend", new Contact("Cristian", "https://github.com/R3ktEr/", "a@a"), "License", "https://github.com/R3ktEr/ExpressPrintBackend/", Collections.emptyList());
     }
 }
 

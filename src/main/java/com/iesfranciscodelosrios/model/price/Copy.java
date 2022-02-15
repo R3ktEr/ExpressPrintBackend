@@ -18,7 +18,7 @@ public class Copy extends Product implements Serializable {
         this.valid = valid;
     }
 
-    public Copy(){
+    public Copy() {
         super();
     }
 
