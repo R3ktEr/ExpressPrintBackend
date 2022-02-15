@@ -21,23 +21,23 @@ public class User implements Serializable{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@ApiModelProperty(notes = "Id del usuario",name="id",required=false,value="1")
+	@ApiModelProperty(value = "Id del usuario",name="id",required=false,example="1")
 	@Column(name="id")
 	private Long id;
 	
-	@ApiModelProperty(notes = "Correo del usuario",name="mail",required=true,value="CorreoFalso@gmail.com")
+	@ApiModelProperty(value = "Correo del usuario",name="mail",required=true,example="CorreoFalso@gmail.com")
 	@Column(name="mail", unique = true)
 	private String mail;
 	
-	@ApiModelProperty(notes = "Nombre del usuario",name="name",required=false,value="Willian smith")
+	@ApiModelProperty(value = "Nombre del usuario",name="name",required=false,example="Willian smith")
 	@Column(name="name")
 	private String name;
 	
-	@ApiModelProperty(notes = "numero de telefono del usuario",name="phone_number",required=false,value="857432423")
+	@ApiModelProperty(value = "numero de telefono del usuario",name="phone_number",required=false,example="857432423")
 	@Column(name="phone_number")
 	private int phoneNumber;
 	
-	@ApiModelProperty(notes = "Indicador de si el usuario tiene permisos de administrador",name="admin",required=false,value="false")
+	@ApiModelProperty(value = "Indicador de si el usuario tiene permisos de administrador",name="admin",required=false,example="false")
 	@Column(name="admin")
 	private boolean admin;
 	
