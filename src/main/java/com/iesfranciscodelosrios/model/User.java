@@ -11,6 +11,8 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import io.swagger.annotations.ApiModelProperty;
+
 @Entity
 @Table(name="_User")
 public class User implements Serializable{
@@ -19,16 +21,26 @@ public class User implements Serializable{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@ApiModelProperty(notes = "Id del usuario",name="id",required=false,value="1")
 	@Column(name="id")
 	private Long id;
+	
+	@ApiModelProperty(notes = "Correo del usuario",name="mail",required=true,value="CorreoFalso@gmail.com")
 	@Column(name="mail", unique = true)
 	private String mail;
+	
+	@ApiModelProperty(notes = "Nombre del usuario",name="name",required=false,value="Willian smith")
 	@Column(name="name")
 	private String name;
+	
+	@ApiModelProperty(notes = "numero de telefono del usuario",name="phone_number",required=false,value="857432423")
 	@Column(name="phone_number")
 	private int phoneNumber;
+	
+	@ApiModelProperty(notes = "Indicador de si el usuario tiene permisos de administrador",name="admin",required=false,value="false")
 	@Column(name="admin")
 	private boolean admin;
+	
 	@JsonIgnoreProperties("user")
 	@OnDelete(action = OnDeleteAction.NO_ACTION)
 	@OneToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, 
