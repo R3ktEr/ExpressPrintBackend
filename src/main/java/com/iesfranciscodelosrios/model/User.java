@@ -35,38 +35,42 @@ public class User implements Serializable{
 	
 	@ApiModelProperty(value = "numero de telefono del usuario",name="phone_number",required=false,example="857432423")
 	@Column(name="phone_number")
-	private int phoneNumber;
-	
+
+	private int phoneNumber; //Cambiar esto a String
 	@ApiModelProperty(value = "Indicador de si el usuario tiene permisos de administrador",name="admin",required=false,example="false")
 	@Column(name="admin")
 	private boolean admin;
-	
+	@Column(name="is_disabled")
+	private boolean isDisabled;
+
 	@JsonIgnoreProperties("user")
 	@OnDelete(action = OnDeleteAction.NO_ACTION)
 	@OneToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, 
 	fetch = FetchType.LAZY, mappedBy = "user", targetEntity = Order.class)
 	private List<Order> userOrders;
-
+	
 	public User() {
 		this.id=-1L;
 	}
 
-	public User(String mail, String name, int phoneNumber, boolean admin) {
+	public User(String mail, String name, int phoneNumber, boolean admin, boolean isDisabled) {
 		super();
 		this.id = -1L;
 		this.mail = mail;
 		this.name = name;
 		this.phoneNumber = phoneNumber;
 		this.admin = admin;
+		this.isDisabled = isDisabled;
 	}
 
-	public User(String mail, String name, int phoneNumber, boolean admin, List<Order> userOrders) {
+	public User(String mail, String name, int phoneNumber, boolean admin, boolean isDisabled, List<Order> userOrders) {
 		super();
 		this.id = -1L;
 		this.mail = mail;
 		this.name = name;
 		this.phoneNumber = phoneNumber;
 		this.admin = admin;
+		this.isDisabled = isDisabled;
 		this.userOrders = userOrders;
 	}
 
@@ -135,6 +139,14 @@ public class User implements Serializable{
 		this.admin = admin;
 	}
 
+	public boolean isDisabled() {
+		return isDisabled;
+	}
+
+	public void setDisabled(boolean isDisabled) {
+		this.isDisabled = isDisabled;
+	}
+
 	public List<Order> getUserOrders() {
 		return userOrders;
 	}
@@ -146,6 +158,6 @@ public class User implements Serializable{
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", mail=" + mail + ", name=" + name + ", phoneNumber=" + phoneNumber + ", admin="
-				+ admin + ", userOrders=" + userOrders + "]";
+				+ admin + ", isDisabled=" + isDisabled + ", userOrders=" + userOrders + "]";
 	}
 }
