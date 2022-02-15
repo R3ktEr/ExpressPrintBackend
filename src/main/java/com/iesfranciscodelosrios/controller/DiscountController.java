@@ -31,20 +31,20 @@ public class DiscountController {
 	DiscountService service;
 
 	private static final Logger logger = LogManager.getLogger();
-	@ApiOperation(value = "getAllDiscounts", notes = "returns all discounts")
-	@ApiResponse(code = 200, message = "OK.  resource is fetched successfully",response=List.class)
+	@ApiOperation(value = "getAllDiscounts", notes = "Devuelve todos los descuentos")
+	@ApiResponse(code = 200, message = "OK",response=List.class)
 	@GetMapping
 	public ResponseEntity<List<Discount>> getAllDiscounts() {
 		List<Discount> discounts = service.getAllDiscounts();
 		return new ResponseEntity<List<Discount>>(discounts, new HttpHeaders(), HttpStatus.OK);
 	}
 	
-	@ApiModelProperty(notes = "Discount id",name="id_d",required=true,value="1")
-	@ApiOperation(value = "getDiscountById", notes = "return a discount by id")
+	@ApiModelProperty(notes = "id de descuento",name="id_d",required=true,value="1")
+	@ApiOperation(value = "getDiscountById", notes = "Devuelve un descuento según su id")
 	@ApiResponses(value= {
-			@ApiResponse(code = 200, message = "OK. resource is fetched successfully",response=Discount.class),
+			@ApiResponse(code = 200, message = "OK",response=Discount.class),
 			@ApiResponse(code = 400, message = "BAD_REQUEST"),
-			@ApiResponse(code = 404, message = "NOT_FOUND. The discount has not been found"),
+			@ApiResponse(code = 404, message = "NOT_FOUND"),
 	})
 	@GetMapping("/{id_d}")
 	public ResponseEntity<Discount> getDiscountById(@PathVariable("id_d") Long id_d) {
@@ -70,20 +70,20 @@ public class DiscountController {
 
 		return new ResponseEntity<Discount>(discount, new HttpHeaders(), httpstatus);
 	}
-	@ApiOperation(value = "createOrUpdatediscount", notes = "return a discount by id")
-	@ApiResponse(code=200, message="OK. Discount created or updated sucefully")
+	@ApiOperation(value = "createOrUpdatediscount", notes = "Devuelve un descuento según su id")
+	@ApiResponse(code=200, message="OK")
 	@RequestMapping(method = { RequestMethod.POST, RequestMethod.PUT })
 	public ResponseEntity<Discount> createOrUpdatediscount(@RequestBody Discount d) {
 		Discount discount = service.createOrUpdatediscount(d);
 		return new ResponseEntity<Discount>(discount, new HttpHeaders(), HttpStatus.OK);
 	}
 	
-	@ApiModelProperty(notes = "Delete a discount by id",name="id_d",required=true,value="1")
-	@ApiOperation(value = "deleteDiscountById", notes = "return a discount by id")
+	
+	@ApiOperation(value = "deleteDiscountById", notes = "devuelve un descuento por su id")
 	@ApiResponses(value= {
-			@ApiResponse(code = 200, message = "OK. resource is deleted successfully",response=Discount.class),
+			@ApiResponse(code = 200, message = "OK",response=Discount.class),
 			@ApiResponse(code = 400, message = "BAD_REQUEST"),
-			@ApiResponse(code = 404, message = "NOT_FOUND. The discount has not been found"),
+			@ApiResponse(code = 404, message = "NOT_FOUND"),
 	})
 	@DeleteMapping("/{id_d}")
 	public HttpStatus deleteDiscountById(@PathVariable("id_d") Long id_d) {
