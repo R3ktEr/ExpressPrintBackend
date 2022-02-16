@@ -154,10 +154,4 @@ public class User implements Serializable{
 	public void setUserOrders(List<Order> userOrders) {
 		this.userOrders = userOrders;
 	}
-
-	@Override
-	public String toString() {
-		return "User [id=" + id + ", mail=" + mail + ", name=" + name + ", phoneNumber=" + phoneNumber + ", admin="
-				+ admin + ", isDisabled=" + isDisabled + ", userOrders=" + userOrders + "]";
-	}
 }

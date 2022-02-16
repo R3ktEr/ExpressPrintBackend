@@ -176,10 +176,4 @@ public class Order implements Serializable {
         Order order = (Order) o;
         return Objects.equals(id, order.id);
     }
-
-    @Override
-    public String toString() {
-        return "Order{" + "id=" + id + ", pickupDate=" + pickupDate + ", user=" + user + ", isPayed=" + isPayed + ", isPickedUp=" + isPickedUp + ", finalPrice=" + finalPrice + ", discounts=" + discounts + '}';
-    }
-
 }

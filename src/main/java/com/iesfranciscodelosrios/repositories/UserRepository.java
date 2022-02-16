@@ -11,7 +11,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	
 	
 	//buscar usuario segun el correo
-	@Query(nativeQuery= false, value= "SELECT u FROM User u WHERE mail= ?1")
+	@Query(nativeQuery= false, value= "SELECT u FROM User u WHERE u.mail= ?1")
 	Optional<User> findByMail(String mail);
 	//
 	/*

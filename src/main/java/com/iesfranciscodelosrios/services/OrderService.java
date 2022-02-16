@@ -1,10 +1,10 @@
 package com.iesfranciscodelosrios.services;
 
+import com.iesfranciscodelosrios.model.Document;
 import com.iesfranciscodelosrios.model.Order;
 import com.iesfranciscodelosrios.model.User;
 import com.iesfranciscodelosrios.repositories.OrderRepository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +21,8 @@ public class OrderService {
     DiscountService discountService;
     @Autowired
     UserService userService;
+    @Autowired
+    DocumentService documentService;
     
     private static final Logger logger = LogManager.getLogger(OrderService.class);
 
@@ -50,31 +52,14 @@ public class OrderService {
 		}
 	}
 	
-	public Order createOrUpdateOrder(Order order) throws Exception {
-		if(order.getId()!=null && order.getId()>0) {
-			Optional<Order> o=orderRepository.findById(order.getId());
-			if(o.isPresent()) { //Update
-				Order newOrder = o.get();
-				newOrder.setId(order.getId());
-				newOrder.setPickupDate(order.getPickupDate());
-				newOrder.setUser(order.getUser());
-				newOrder.setPayed(order.isPayed());
-				newOrder.setPickedUp(order.isPickedUp());
-				newOrder.setFinalPrice(order.getFinalPrice());
-				
-				newOrder.setDiscounts(discountService.getAllDiscounts());
-				
-				newOrder = orderRepository.save(newOrder);
-				return newOrder;
-			}else {
-				logger.info("El pedido con id "+order.getId()+"no existe");
-				throw new Exception("El pedido con id "+order.getId()+"no existe");
-			}
-		}else { //Insert
-			order.setId(null);
-			order.setOrderDate(LocalDateTime.now());
-			order.setDiscounts(discountService.getAllDiscounts());
-			
+	public Order createOrder(Order order) throws Exception {
+		if(order.getId()==null) {
+			order.setId(-1L);
+		}
+		
+		Optional<Order> o=orderRepository.findById(order.getId());
+		
+		if(o.isEmpty()) {
 			/**
 			 * Compruebo que el usuario pasado por JSON exista en la base de datos y me lo traigo ya persistido
 			 */
@@ -82,21 +67,54 @@ public class OrderService {
 			
 			try {
 				User u2=userService.findUserByMail(u1.getMail());
-				if(u1.equals(u2)&&(u1.getMail().equals(u2.getMail()))) {
-					order.setUser(u2);
-					order=orderRepository.save(order);			
-				}else {
-					logger.info("El usuario del pedido no es el mismo que el de la base de datos");
-					throw new Exception("El usuario del pedido no es el mismo que el de la base de datos");
-				}
 				
-				return order;
+				if(u1.getMail().equals(u2.getMail())) {
+					List<Document> documents=order.getDocuments();
+					List<Document> savedDocuments;
+					try {
+						savedDocuments=documentService.saveDocuments(documents);				
+					}catch(Exception e) {
+						throw e;
+					}					
+					
+					order.setDocuments(savedDocuments);
+					Order savedOrder=orderRepository.save(order);
+					
+					return savedOrder;
+				}else {
+					logger.info("El correo del usuario del pedido no concuerda con el correo del usuario de la base de datos");
+					throw new Exception("El correo del usuario del pedido no concuerda con el correo del usuario de la base de datos");
+				}
 			} catch (Exception e) {
-				logger.info("El usuario asociado al pedido no existe");
-				throw new Exception("El usuario asociado al pedido no existe");
+				logger.info("El usuario del pedido no existe en la base de datos");
+				throw new Exception("El usuario del pedido no existe en la base de datos");
 			}
+		}else {
+			logger.info("El pedido que intenta crear ya existe en la base de datos");
+			throw new Exception("El pedido que intenta crear ya existe en la base de datos");
 		}
-		
+	}
+	
+	public Order updateOrder(Order order) throws Exception {			
+		try {
+			Optional<Order> o=orderRepository.findById(order.getId());			
+			if(o.isPresent()) {
+				Order updatedOrder=o.get();
+				updatedOrder.setPayed(order.isPayed());
+				updatedOrder.setPickedUp(order.isPickedUp());
+				updatedOrder.setReady(order.isReady());
+				
+				orderRepository.save(updatedOrder);
+				
+				return updatedOrder;
+			}else {
+				logger.info("El pedido que intenta actualizar no existe en la base de datos");
+				throw new Exception("El pedido que intenta actualizar no existe en la base de datos");
+			}
+		}catch(IllegalArgumentException e) {
+			logger.info("Error: La id del pedido que se intenta actualizar es null");
+			throw new Exception("Error: La id del pedido que se intenta actualizar es null");
+		}
 	}
 	
 	public void deleteOrderById(Long id) throws Exception{
