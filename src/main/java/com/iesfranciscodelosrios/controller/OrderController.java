@@ -7,9 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,7 +25,9 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
+
 @RestController 
+@CrossOrigin(methods = {RequestMethod.GET,RequestMethod.PUT,RequestMethod.POST,RequestMethod.DELETE})
 @RequestMapping("/orders") 
 public class OrderController {
 	@Autowired
@@ -92,21 +97,41 @@ public class OrderController {
 		return new ResponseEntity<List<Order>>(orders, new HttpHeaders(), httpstatus);
 	}
 	
-	@ApiOperation(value="Create and update orders",notes="Returns the created or update order")
+	@ApiOperation(value="Create order",notes="Returns the created order")
 	@ApiResponses(value= {	
 		@ApiResponse(code=200, message="Successfull operation",response=List.class),
-		@ApiResponse(code=404, message="Order not found")
+		@ApiResponse(code=400, message="Bad Request")
 	})
-	@RequestMapping(method = {RequestMethod.POST, RequestMethod.PUT})
-	public ResponseEntity<Order> createOrUpdateOrder(@RequestBody Order o){
+	@PostMapping
+	public ResponseEntity<Order> createOrder(@RequestBody Order o){
 		HttpStatus httpstatus;
 		Order order;
 		try {
-			order = orderService.createOrUpdateOrder(o);
+			order = orderService.createOrder(o);
 			httpstatus=HttpStatus.OK;
 		} catch (Exception e) {
 			order=new Order();
-			httpstatus=HttpStatus.NOT_FOUND;
+			httpstatus=HttpStatus.BAD_REQUEST;
+			e.printStackTrace();
+		}
+		return new ResponseEntity<Order>(order, new HttpHeaders(), httpstatus);
+	}
+	
+	@ApiOperation(value="Update order",notes="Returns the updated order")
+	@ApiResponses(value= {	
+		@ApiResponse(code=200, message="Successfull operation",response=List.class),
+		@ApiResponse(code=400, message="Bad Request")
+	})
+	@PutMapping
+	public ResponseEntity<Order> updateOrder(@RequestBody Order o){
+		HttpStatus httpstatus;
+		Order order;
+		try {
+			order = orderService.updateOrder(o);
+			httpstatus=HttpStatus.OK;
+		} catch (Exception e) {
+			order=new Order();
+			httpstatus=HttpStatus.BAD_REQUEST;
 			e.printStackTrace();
 		}
 		return new ResponseEntity<Order>(order, new HttpHeaders(), httpstatus);

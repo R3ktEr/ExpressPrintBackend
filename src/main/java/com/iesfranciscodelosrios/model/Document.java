@@ -56,7 +56,7 @@ public class Document implements Serializable{
 	@Column(name="ringedPosition") 
 	private boolean ringedPosition; //Layout of the ringed. True vertical, false horizontal
 	
-	@JsonIgnoreProperties("documents")
+	@JsonIgnoreProperties({"documents","user"})
 	@OnDelete(action = OnDeleteAction.NO_ACTION)
 	@ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER, targetEntity = Order.class)
 	private Order order;
@@ -265,13 +265,5 @@ public class Document implements Serializable{
 
 	public void setOrder(Order order) {
 		this.order = order;
-	}
-
-	@Override
-	public String toString() {
-		return "Document [id=" + id + ", nCopies=" + CopyPrice + ", isColor=" + isColor + ", size=" + size
-				+ ", thickness=" + thickness + ", impressionType=" + isTwoSides + ", finishType=" + finishType
-				+ ", impressionPerSide=" + impressionPerSide + ", isVertical=" + isVertical + ", ringedPosition="
-				+ ringedPosition + ", comment=" + comment + ", url=" + url + "]";
 	}
 }
