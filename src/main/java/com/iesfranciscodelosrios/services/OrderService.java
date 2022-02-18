@@ -5,6 +5,7 @@ import com.iesfranciscodelosrios.model.Order;
 import com.iesfranciscodelosrios.model.User;
 import com.iesfranciscodelosrios.repositories.OrderRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -69,14 +70,14 @@ public class OrderService {
 				User u2=userService.findUserByMail(u1.getMail());
 				
 				if(u1.getMail().equals(u2.getMail())) {
-					List<Document> documents=order.getDocuments();
-					List<Document> savedDocuments;
+					List<Document> orderdocuments = order.getDocuments();
+					order.setDocuments(new ArrayList<>());
+					order = orderRepository.save(order);
 					try {
-						savedDocuments=documentService.saveDocuments(documents, order);
+						documentService.saveDocuments(orderdocuments, order);
 					}catch(Exception e) {
 						throw e;
 					}
-					
 					return order;
 				}else {
 					logger.info("El correo del usuario del pedido no concuerda con el correo del usuario de la base de datos");
