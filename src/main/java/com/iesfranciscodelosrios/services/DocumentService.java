@@ -1,6 +1,7 @@
 package com.iesfranciscodelosrios.services;
 
 import com.iesfranciscodelosrios.model.Document;
+import com.iesfranciscodelosrios.model.Order;
 import com.iesfranciscodelosrios.repositories.DocumentRepository;
 
 import java.util.ArrayList;
@@ -29,20 +30,25 @@ public class DocumentService {
 		}			
 	}
 	
-	public List<Document> saveDocuments(List<Document> documents) throws Exception {
-		List<Document> result=new ArrayList<Document>();
-		
+	public List<Document> saveDocuments(List<Document> documents, Order order) throws Exception {
+		List<Document> result=new ArrayList<>();
+		Long idOrder = null;
 		if(!documents.isEmpty()) {
 			for (Document document : documents) {
 				try{
-					Document d=documentRepository.save(document);					
+					document.setOrder(order);
+					Document d=documentRepository.save(document);
+					if(idOrder== null)
+						idOrder= d.getOrder().getId();
 					result.add(d);
 				}catch(Exception e) {
 					e.printStackTrace();
 					logger.info("Uno de los precios asociados al documento no existe en la base de datos");
 					throw new Exception("Uno de los precios asociados al documento no existe en la base de datos");
 				}
-			}			
+			}
+			order.setId(idOrder);
+			order.setDocuments(result);
 		}else {
 			logger.info("La lista de documentos que se intenta guardar esta vacia");
 			throw new Exception("La lista de documentos que se intenta guardar esta vacia");

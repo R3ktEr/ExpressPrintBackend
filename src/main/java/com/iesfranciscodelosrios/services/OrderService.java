@@ -69,19 +69,15 @@ public class OrderService {
 				User u2=userService.findUserByMail(u1.getMail());
 				
 				if(u1.getMail().equals(u2.getMail())) {
-					/*
 					List<Document> documents=order.getDocuments();
 					List<Document> savedDocuments;
 					try {
-						savedDocuments=documentService.saveDocuments(documents);				
+						savedDocuments=documentService.saveDocuments(documents, order);
 					}catch(Exception e) {
 						throw e;
-					}					
+					}
 					
-					order.setDocuments(savedDocuments);*/
-					Order savedOrder=orderRepository.save(order);
-					
-					return savedOrder;
+					return order;
 				}else {
 					logger.info("El correo del usuario del pedido no concuerda con el correo del usuario de la base de datos");
 					throw new Exception("El correo del usuario del pedido no concuerda con el correo del usuario de la base de datos");
