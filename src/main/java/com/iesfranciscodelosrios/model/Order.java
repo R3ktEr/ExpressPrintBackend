@@ -36,7 +36,7 @@ public class Order implements Serializable {
     @OnDelete(action = OnDeleteAction.NO_ACTION)
     @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER, targetEntity = User.class)
     @ApiModelProperty(value = "Id del usuario",name="user",dataType = "User" ,required=true)
-    @JoinColumn(name="id_user")
+    @JoinColumn(name="id_user", nullable = false)
     private User user;
     @ApiModelProperty(value = "Indica si el pedido esta pagado",name="isPayed",dataType = "boolean",required=false,example="false")
     @Column(name = "is_Payed")
@@ -60,6 +60,7 @@ public class Order implements Serializable {
     @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.LAZY, targetEntity = Discount.class)
     private List<Discount> discounts;
     
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = Document.class)
     private List<Document> documents;
 

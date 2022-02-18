@@ -69,6 +69,7 @@ public class OrderService {
 				User u2=userService.findUserByMail(u1.getMail());
 				
 				if(u1.getMail().equals(u2.getMail())) {
+					/*
 					List<Document> documents=order.getDocuments();
 					List<Document> savedDocuments;
 					try {
@@ -77,7 +78,7 @@ public class OrderService {
 						throw e;
 					}					
 					
-					order.setDocuments(savedDocuments);
+					order.setDocuments(savedDocuments);*/
 					Order savedOrder=orderRepository.save(order);
 					
 					return savedOrder;
