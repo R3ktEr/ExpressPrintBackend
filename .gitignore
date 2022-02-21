@@ -4,6 +4,9 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 bin/
+credentials.json
+tokens/
+mierdadesage.pdf
 
 ### STS ###
 .apt_generated
