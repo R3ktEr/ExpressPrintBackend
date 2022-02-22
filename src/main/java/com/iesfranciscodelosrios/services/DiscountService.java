@@ -49,7 +49,8 @@ public class DiscountService {
 				newdiscount.setName(discount.getName());
 				newdiscount.setPercentage(discount.getPercentage());
 				newdiscount.setFixedValue(discount.getFixedValue());
-				newdiscount.setFixed(discount.isFixed());				
+				newdiscount.setFixed(discount.isFixed());	
+				newdiscount.setActive(discount.isActive());
 				newdiscount = discountRepository.save(newdiscount);
 				return newdiscount;
 			}else { //Insert
@@ -69,12 +70,15 @@ public class DiscountService {
      * @throws Exception devuelve un mensaje de descuento inexistente
      */
 	public void deleteDiscountById(Long id) throws Exception{
-		Optional<Discount> discount=discountRepository.findById(id);
-		if(discount.isPresent()) {
-			discountRepository.deleteById(id);
+		Optional<Discount> disc=discountRepository.findById(id);
+		if(disc.isPresent()) {
+			Discount discount=disc.get();
+			discount.setActive(false);
+			createOrUpdatediscount(discount);
 		}else {
 			throw new Exception("El descuento no existe");
 		}
 	}
 
+	//TODO: La opcion de poder reactivar el descuento "borrado"
 }

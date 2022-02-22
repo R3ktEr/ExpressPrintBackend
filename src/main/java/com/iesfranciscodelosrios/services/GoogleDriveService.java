@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import com.google.api.client.auth.oauth2.Credential;
@@ -23,12 +24,14 @@ import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
-import com.google.api.services.drive.model.FileList;
 import com.google.api.services.drive.model.Permission;
 import com.iesfranciscodelosrios.ExpressprintApplication;
 
 import java.io.InputStreamReader;
+import java.nio.file.Files;
 import java.security.GeneralSecurityException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class GoogleDriveService {
 	
@@ -46,6 +49,24 @@ public class GoogleDriveService {
     private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE);
     private static final String CREDENTIALS_FILE_PATH = "credentials.json";
 
+    private Drive service;
+    
+    public GoogleDriveService() {
+    	NetHttpTransport HTTP_TRANSPORT;
+		try {
+			HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
+			service = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
+					.setApplicationName(APPLICATION_NAME)
+					.build();
+		} catch (GeneralSecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+    
     /**
      * Creates an authorized Credential object.
      * @param HTTP_TRANSPORT The network HTTP Transport.
@@ -71,74 +92,118 @@ public class GoogleDriveService {
         //returns an authorized Credential object.
         return credential;
     }
+    
+    /**
+     * Crea en Google Drive una carpeta con el nombre del usuario y la fecha del pedido. Dicha carpeta contiene
+     * cada uno de los documentos asociados al pedido
+     * 
+     * @param orderName: Nombre del pedido
+     * @param fileList: Lista de documentos del pedido
+     * @throws IOException: Interrupcion de la comunicacion durante la operacion
+     * @throws GeneralSecurityException: Errores relacionados con los permisos del usuario
+     */
+    public void createOrderFolder(String orderName, List<java.io.File> fileList) throws IOException, GeneralSecurityException {
+		String folderId = createFolder(orderName);
+		populateFolder(fileList, folderId);
+		
+    }
 
-    public static void createFolder() throws IOException, GeneralSecurityException {
-        // Build a new authorized API client service.
-        final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-        Drive service = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
-                .setApplicationName(APPLICATION_NAME)
-                .build();
+    /**
+     * Crea una carpeta en google Drive dado un nombre.
+     * 
+     * @param name: Nombre de la carpeta
+     * @return
+     * @throws IOException: Interrupcion de la comunicacion durante la operacion
+     * @throws GeneralSecurityException: Errores relacionados con los permisos del usuario
+     */
+    public String createFolder(String name) throws IOException, GeneralSecurityException {
+    	String dateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
-        File fileMetadata = new File();
-        fileMetadata.setName("Prueba");
+    	File fileMetadata = new File();
+        fileMetadata.setName(name+" "+dateTime);
         fileMetadata.setMimeType("application/vnd.google-apps.folder");
+        
 
         File file = service.files().create(fileMetadata)
             .setFields("id")
             .execute();
         System.out.println("Folder ID: " + file.getId());
+        
+        return file.getId();
     }
     
-    public static void uploadFile() throws IOException, GeneralSecurityException {
-    	// Build a new authorized API client service.
-        final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-        Drive service = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
-                .setApplicationName(APPLICATION_NAME)
-                .build();
-
-    	File fileMetadata = new File();
-    	fileMetadata.setName("mierdadesage.pdf");
+    /**
+     * Rellena una carpeta con una lista de documentos
+     * 
+     * @param fileList: La lista de documentos
+     * @param folderId: Id de la carpeta a rellenar
+     * @return webLinks: Lista en formato clave valor con el nombre del documento y la url de drive asociado a el
+     * @throws IOException: Interrupcion de la comunicacion durante la operacion
+     * @throws GeneralSecurityException: Errores relacionados con los permisos del usuario
+     */
+    public LinkedHashMap<String, String> populateFolder(List<java.io.File> fileList, String folderId) throws IOException, GeneralSecurityException {
+    	LinkedHashMap<String, String> webLinks=new LinkedHashMap<String, String>();
     	
-    	java.io.File filePath = new java.io.File("mierdadesage.pdf");
-    	FileContent mediaContent = new FileContent("application/pdf", filePath);
-    	File file = service.files().create(fileMetadata, mediaContent)
-    	    .setFields("id, webViewLink")
-    	    .execute();
-    	System.out.println("File ID: " + file.getId());
+    	for (java.io.File file : fileList) {
+    		File fileMetadata = new File();
+    		
+    		fileMetadata.setName(file.toPath().getFileName().toString());
+    		fileMetadata.setParents(Collections.singletonList(folderId));
+    		
+    		String mimeType=Files.probeContentType(file.toPath());
+    		
+    		FileContent mediaContent = new FileContent(mimeType, file);
+    		File gfile = service.files().create(fileMetadata, mediaContent)
+    				.setFields("id, name, webViewLink")
+    				.execute();
+    		
+    		/*
+    		 * Cuidado! Asegurarse en la vista de que no se le pasa al backend dos documentos con un misma url
+    		 * ya que el hashmap usa como clave el nombre y machacaría al anterior insertado con el mismo nombre
+    		 */
+    		webLinks.put(gfile.getName(), gfile.getWebViewLink());
+    		
+    		System.out.println("File ID: " + gfile.getId());
+    		System.out.println(file);
+    	}    	
+    	
+    	System.out.println("\n"+webLinks.toString());
+    	
+    	return webLinks;
+    }
+    
+    /**
+     * Sube un archivo al directorio raiz del usuario de Google Drive.
+     * 
+     * @param file: El archivo a subir
+     * @throws IOException: Interrupcion de la comunicacion durante la operacion
+     * @throws GeneralSecurityException: Errores relacionados con los permisos del usuario
+     */
+    public void uploadFile(java.io.File file) throws IOException, GeneralSecurityException {
+    	File fileMetadata = new File();
+    	fileMetadata.setName(file.toPath().getFileName().toString());
+    	
+    	String mimeType=Files.probeContentType(file.toPath());
+		
+		FileContent mediaContent = new FileContent(mimeType, file);
+		File gfile = service.files().create(fileMetadata, mediaContent)
+				.setFields("id, name, webViewLink")
+				.execute();
+		
+    	System.out.println("File ID: " + gfile.getId());
     	System.out.println(file);
     }
     
-    public static void readFiles() throws IOException, GeneralSecurityException {
-    	// Build a new authorized API client service.
-        final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-        Drive service = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
-                .setApplicationName(APPLICATION_NAME)
-                .build();
-
-        String pageToken = null;
-        do {
-          FileList result = service.files().list()
-              .setQ("mimeType='image/jpeg'")
-              .setSpaces("drive")
-              .setFields("nextPageToken, files(id, name)")
-              .setPageToken(pageToken)
-              .execute();
-          for (File file : result.getFiles()) {
-            System.out.printf("Found file: %s (%s)\n",
-                file.getName(), file.getId());
-          }
-          pageToken = result.getNextPageToken();
-        } while (pageToken != null);
-    }
-    
-    public static void setPermission() throws GeneralSecurityException, IOException {
-    	// Build a new authorized API client service.
-        final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-        Drive service = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
-                .setApplicationName(APPLICATION_NAME)
-                .build();
-        
-    	String fileId = "1FOTJESBaA8xj2DK_x_WLCcZ5HQNBFy3n";
+    /**
+     * Comparte y se le da permisos de lectura a un archivo asociado a un usuario distinto al propietario de la cuenta 
+     * de Google Drive.
+     * 
+     * @param fileId: El archivo que se va a compartir y al que se le va a dar permisos de lectura
+     * @param email: El correo del usuario al que se le van a conceder los permisos
+     * @throws GeneralSecurityException: Errores relacionados con los permisos del usuario
+     * @throws IOException: Interrupcion de la comunicacion durante la operacion
+     */
+    public void setPermission(String fileId, String email) throws GeneralSecurityException, IOException {
     	JsonBatchCallback<Permission> callback = new JsonBatchCallback<Permission>() {
     	  @Override
     	  public void onFailure(GoogleJsonError e,
@@ -159,9 +224,9 @@ public class GoogleDriveService {
     	Permission userPermission = new Permission()
     	    .setType("user")
     	    .setRole("reader")
-    	    .setEmailAddress("alvaroperezab@gmail.com");
+    	    .setEmailAddress(email);
     	try {
-			service.permissions().create(fileId, userPermission)
+    		service.permissions().create(fileId, userPermission)
 			    .setFields("id")
 			    .queue(batch, callback);
 			
@@ -170,6 +235,5 @@ public class GoogleDriveService {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-
     }
 }

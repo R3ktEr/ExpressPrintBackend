@@ -38,8 +38,8 @@ public class OrderService {
 		if(order.isPresent()) {
 			return order.get();
 		}else {
-			logger.info("El pedido con id "+id+"no existe");
-			throw new Exception("El pedido con id "+id+"no existe");
+			logger.info("El pedido con id "+id+" no existe");
+			throw new Exception("El pedido con id "+id+" no existe");
 		}
 	}
 	
@@ -72,6 +72,7 @@ public class OrderService {
 				if(u1.getMail().equals(u2.getMail())) {
 					List<Document> orderdocuments = order.getDocuments();
 					order.setDocuments(new ArrayList<>());
+					order.setDiscounts(discountService.getAllDiscounts());
 					order = orderRepository.save(order);
 					try {
 						documentService.saveDocuments(orderdocuments, order);
