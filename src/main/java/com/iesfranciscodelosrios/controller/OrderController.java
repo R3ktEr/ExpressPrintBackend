@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.iesfranciscodelosrios.model.Order;
 import com.iesfranciscodelosrios.services.OrderService;
@@ -115,6 +117,26 @@ public class OrderController {
 			e.printStackTrace();
 		}
 		return new ResponseEntity<Order>(order, new HttpHeaders(), httpstatus);
+	}
+	
+	@ApiOperation(value="Upload Documents",notes="Upload documents to Google Drive")
+	@ApiResponses(value= {	
+		@ApiResponse(code=200, message="Successfull operation",response=List.class),
+		@ApiResponse(code=400, message="Bad Request")
+	})
+	@PostMapping("/upload")
+	public HttpStatus createOrder(@RequestParam("files") List<MultipartFile> files, 
+			@RequestParam("user") String userName){
+		HttpStatus httpstatus;
+		
+		try {
+			orderService.uploadOrderFiles(files, userName);
+			httpstatus=HttpStatus.OK;
+		} catch (Exception e) {
+			httpstatus=HttpStatus.BAD_REQUEST;
+			e.printStackTrace();
+		}
+		return httpstatus;
 	}
 	
 	@ApiOperation(value="Update order",notes="Returns the updated order")

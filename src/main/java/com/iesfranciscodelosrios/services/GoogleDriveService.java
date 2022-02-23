@@ -1,17 +1,22 @@
 package com.iesfranciscodelosrios.services;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
+
+import org.springframework.stereotype.Service;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.batch.BatchRequest;
 import com.google.api.client.googleapis.batch.json.JsonBatchCallback;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
@@ -33,6 +38,7 @@ import java.security.GeneralSecurityException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+@Service
 public class GoogleDriveService {
 	
 	/** Application name. */
@@ -84,11 +90,15 @@ public class GoogleDriveService {
         // Build flow and trigger user authorization request.
         GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
                 HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
-                .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIRECTORY_PATH)))
+                .setDataStoreFactory(new FileDataStoreFactory(new java.io.File("credentials2.json")))
                 .setAccessType("offline")
                 .build();
         LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
         Credential credential = new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
+        
+        //GoogleCredential credential = GoogleCredential.fromStream(new FileInputStream("MyProject-1234.json"))
+        	//    .createScoped(Collections.singleton(SQLAdminScopes.SQLSERVICE_ADMIN));
+        
         //returns an authorized Credential object.
         return credential;
     }
@@ -99,13 +109,16 @@ public class GoogleDriveService {
      * 
      * @param orderName: Nombre del pedido
      * @param fileList: Lista de documentos del pedido
+     * @return webLinks: HashMap con el id de la carpeta del pedido y la lista de enlaces de cada uno de los documentos
+     * que contiene
      * @throws IOException: Interrupcion de la comunicacion durante la operacion
      * @throws GeneralSecurityException: Errores relacionados con los permisos del usuario
      */
-    public void createOrderFolder(String orderName, List<java.io.File> fileList) throws IOException, GeneralSecurityException {
+    public LinkedHashMap<String, List<String>> createOrderFolder(String orderName, List<java.io.File> fileList) throws IOException, GeneralSecurityException {
 		String folderId = createFolder(orderName);
-		populateFolder(fileList, folderId);
+		LinkedHashMap<String, List<String>> webLinks=populateFolder(fileList, folderId);
 		
+		return webLinks;
     }
 
     /**
@@ -127,9 +140,20 @@ public class GoogleDriveService {
         File file = service.files().create(fileMetadata)
             .setFields("id")
             .execute();
-        System.out.println("Folder ID: " + file.getId());
+        
+        //System.out.println("Folder ID: " + file.getId());
         
         return file.getId();
+    }
+    
+    /**
+     * Borra una carpeta por id
+     * 
+     * @param folderId: Id de la carpeta
+     * @throws IOException: Interrupcion de la comunicacion durante la operacion
+     */
+    public void deleteFolder(String folderId) throws IOException {
+    	service.files().delete(folderId);
     }
     
     /**
@@ -137,12 +161,14 @@ public class GoogleDriveService {
      * 
      * @param fileList: La lista de documentos
      * @param folderId: Id de la carpeta a rellenar
-     * @return webLinks: Lista en formato clave valor con el nombre del documento y la url de drive asociado a el
+     * @return webLinks: HashMap con el id de la carpeta del pedido y la lista de enlaces de cada uno de los documentos
+     * que contiene
      * @throws IOException: Interrupcion de la comunicacion durante la operacion
      * @throws GeneralSecurityException: Errores relacionados con los permisos del usuario
      */
-    public LinkedHashMap<String, String> populateFolder(List<java.io.File> fileList, String folderId) throws IOException, GeneralSecurityException {
-    	LinkedHashMap<String, String> webLinks=new LinkedHashMap<String, String>();
+    public LinkedHashMap<String, List<String>> populateFolder(List<java.io.File> fileList, String folderId) throws IOException, GeneralSecurityException {
+    	LinkedHashMap<String, List<String>> webLinks=new LinkedHashMap<String, List<String>>();
+    	List<String> linksList= new ArrayList<String>();
     	
     	for (java.io.File file : fileList) {
     		File fileMetadata = new File();
@@ -157,17 +183,15 @@ public class GoogleDriveService {
     				.setFields("id, name, webViewLink")
     				.execute();
     		
-    		/*
-    		 * Cuidado! Asegurarse en la vista de que no se le pasa al backend dos documentos con un misma url
-    		 * ya que el hashmap usa como clave el nombre y machacaría al anterior insertado con el mismo nombre
-    		 */
-    		webLinks.put(gfile.getName(), gfile.getWebViewLink());
+    		linksList.add(gfile.getWebViewLink());
     		
-    		System.out.println("File ID: " + gfile.getId());
-    		System.out.println(file);
-    	}    	
+    		//System.out.println("File ID: " + gfile.getId());
+    		//System.out.println(file);
+    	}
     	
-    	System.out.println("\n"+webLinks.toString());
+    	webLinks.put(folderId, linksList);
+    	
+    	//System.out.println("\n"+webLinks.toString());
     	
     	return webLinks;
     }
@@ -186,12 +210,13 @@ public class GoogleDriveService {
     	String mimeType=Files.probeContentType(file.toPath());
 		
 		FileContent mediaContent = new FileContent(mimeType, file);
+		@SuppressWarnings("unused")
 		File gfile = service.files().create(fileMetadata, mediaContent)
 				.setFields("id, name, webViewLink")
 				.execute();
 		
-    	System.out.println("File ID: " + gfile.getId());
-    	System.out.println(file);
+    	//System.out.println("File ID: " + gfile.getId());
+    	//System.out.println(file);
     }
     
     /**
@@ -210,14 +235,15 @@ public class GoogleDriveService {
     	                        HttpHeaders responseHeaders)
     	      throws IOException {
     	    // Handle error
-    	    System.err.println(e.getMessage());
+    	    //System.err.println(e.getMessage());
+    		  throw new IOException(e.getMessage());
     	  }
 
     	  @Override
     	  public void onSuccess(Permission permission,
     	                        HttpHeaders responseHeaders)
     	      throws IOException {
-    	    System.out.println("Permission ID: " + permission.getId());
+    	    //System.out.println("Permission ID: " + permission.getId());
     	  }
     	};
     	BatchRequest batch = service.batch();
@@ -233,7 +259,7 @@ public class GoogleDriveService {
 			batch.execute();
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			throw new IOException(e1.getMessage());
 		}
     }
 }

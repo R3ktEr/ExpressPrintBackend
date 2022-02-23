@@ -5,9 +5,8 @@ target/
 !**/src/test/**/target/
 bin/
 credentials.json
+credentials2.json
 tokens/
-mierdadesage.pdf
-mierda sage 2.pdf
 
 ### STS ###
 .apt_generated
