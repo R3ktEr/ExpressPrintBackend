@@ -50,23 +50,18 @@ public class GoogleDriveService {
     private static final GsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
     /** Directory to store authorization tokens for this application. */
     private static final String TOKENS_DIRECTORY_PATH = "src/main/resources/com/iesfranciscodelosrios/tokens";
-    
-    private static final String REFRESH_TOKEN="1//04PBrfp9CnhiuCgYIARAAGAQSNwF-L9IrtcJSZYNmpLFVvc5LCXZSiFBXDv2k6AwjY6Nll6Yf_ctdOgUqmWZCkwtTZOxdqMiwpZ8";
 
     /**
      * Global instance of the scopes required by this quickstart.
      * If modifying these scopes, delete your previously saved tokens/ folder.
      */
-    private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE);
-    private static final String CREDENTIALS_FILE_PATH = "credentials.json";
 
     private Drive service;
     
     public GoogleDriveService() {
-    	NetHttpTransport HTTP_TRANSPORT;
+
 		try {
-			HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-			service = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
+			service = new Drive.Builder(GoogleNetHttpTransport.newTrustedTransport(), JSON_FACTORY, getCredentials())
 					.setApplicationName(APPLICATION_NAME)
 					.build();
 		} catch (GeneralSecurityException e) {
@@ -80,69 +75,14 @@ public class GoogleDriveService {
     
     /**
      * Creates an authorized Credential object.
-     * @param HTTP_TRANSPORT The network HTTP Transport.
      * @return An authorized Credential object.
-     * @throws IOException If the credentials.json file cannot be found.
+     * @throws IOException If the file cannot be found.
      * @throws GeneralSecurityException 
      */
-    private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException, GeneralSecurityException {
-    	 // Load client secrets.
-        InputStream in = ExpressprintApplication.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
-        if (in == null) {
-            throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
-        }
-        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
-        
-        FileDataStoreFactory fileDataStoreFactory = new FileDataStoreFactory(new java.io.File(TOKENS_DIRECTORY_PATH));
-        DataStore<StoredCredential> datastore = fileDataStoreFactory.getDataStore("StoredCredential");
-        
-        datastore.values().forEach(x -> x.setRefreshToken(REFRESH_TOKEN));
-        datastore.values().forEach(x -> x.setExpirationTimeMilliseconds(null));
-        
-        datastore.values().forEach(x -> System.out.println("Token Expiration time: "+x.getExpirationTimeMilliseconds()));
-        
-        // Build flow and trigger user authorization request.
-        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
-                HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
-        		.setTokenServerUrl(new GenericUrl(GoogleOAuthConstants.TOKEN_SERVER_URL))
-                .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIRECTORY_PATH)))
-                .setCredentialDataStore(datastore)
-                .setAccessType("offline")
-                .setApprovalPrompt(null)
-                .build();
-		GoogleCredential credential = GoogleCredential.fromStream(ExpressprintApplication.class.getResourceAsStream("expressprint.json"));
-        /*LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
-        Credential credential = new AuthorizationCodeInstalledApp(flow, receiver).authorize("user")
-        		.setRefreshToken(REFRESH_TOKEN);*/
-        
-        StoredCredential storedCredentials=new StoredCredential(credential);
-        storedCredentials.setRefreshToken(REFRESH_TOKEN);
-        storedCredentials.setExpirationTimeMilliseconds(null); 
-        
-        //returns an authorized Credential object.
-   
+    private static Credential getCredentials() throws IOException, GeneralSecurityException {
+		GoogleCredential credential = GoogleCredential.fromStream(ExpressprintApplication.class.getResourceAsStream("expressprint.json")).createScoped(Collections.singletonList(DriveScopes.DRIVE));
         return credential;
     }
-    
-    /*
-    private static Credential createCredentialWithRefreshToken(
-    	    HttpTransport transport,
-    	    JsonFactory jsonFactory,
-    	    TokenResponse tokenResponse) {
-    	  String clientId = "921786245072-15raqampr57qi34d282ts8oevih9okcr.apps.googleusercontent.com";
-    	  String clientSecret = "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";
-    	  return new Credential.Builder(BearerToken.authorizationHeaderAccessMethod()).setTransport(
-    	      transport)
-    	      .setJsonFactory(jsonFactory)
-    	      .setTokenServerUrl(
-    	          new GenericUrl(GoogleOAuthConstants.TOKEN_SERVER_URL))
-    	      .setClientAuthentication(new BasicAuthentication(
-    	          clientId,
-    	          clientSecret))
-    	      .build()
-    	      .setFromTokenResponse(tokenResponse);
-    	  //tokenResponse.setRefreshToken(refreshToken)
-    	}*/
     
     /**
      * Crea en Google Drive una carpeta con el nombre del usuario y la fecha del pedido. Dicha carpeta contiene
@@ -181,8 +121,7 @@ public class GoogleDriveService {
         File file = service.files().create(fileMetadata)
             .setFields("id")
             .execute();
-        
-        //System.out.println("Folder ID: " + file.getId());
+
         
         return file.getId();
     }
@@ -225,14 +164,10 @@ public class GoogleDriveService {
     				.execute();
     		
     		linksList.add(gfile.getWebViewLink());
-    		
-    		//System.out.println("File ID: " + gfile.getId());
-    		//System.out.println(file);
+
     	}
     	
     	webLinks.put(folderId, linksList);
-    	
-    	//System.out.println("\n"+webLinks.toString());
     	
     	return webLinks;
     }
@@ -255,9 +190,6 @@ public class GoogleDriveService {
 		File gfile = service.files().create(fileMetadata, mediaContent)
 				.setFields("id, name, webViewLink")
 				.execute();
-		
-    	//System.out.println("File ID: " + gfile.getId());
-    	//System.out.println(file);
     }
     
     /**
