@@ -7,6 +7,7 @@ bin/
 credentials.json
 credentials2.json
 tokens/
+src/main/resources/application.properties
 
 ### STS ###
 .apt_generated

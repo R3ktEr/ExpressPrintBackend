@@ -1,6 +1,5 @@
 package com.iesfranciscodelosrios.services;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,19 +11,22 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.auth.oauth2.StoredCredential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
+import com.google.api.client.googleapis.auth.oauth2.GoogleOAuthConstants;
 import com.google.api.client.googleapis.batch.BatchRequest;
 import com.google.api.client.googleapis.batch.json.JsonBatchCallback;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.googleapis.json.GoogleJsonError;
 import com.google.api.client.http.FileContent;
+import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
+import com.google.api.client.util.store.DataStore;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
@@ -47,6 +49,8 @@ public class GoogleDriveService {
     private static final GsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
     /** Directory to store authorization tokens for this application. */
     private static final String TOKENS_DIRECTORY_PATH = "src/main/resources/com/iesfranciscodelosrios/tokens";
+    
+    private static final String REFRESH_TOKEN="1//04PBrfp9CnhiuCgYIARAAGAQSNwF-L9IrtcJSZYNmpLFVvc5LCXZSiFBXDv2k6AwjY6Nll6Yf_ctdOgUqmWZCkwtTZOxdqMiwpZ8";
 
     /**
      * Global instance of the scopes required by this quickstart.
@@ -78,30 +82,66 @@ public class GoogleDriveService {
      * @param HTTP_TRANSPORT The network HTTP Transport.
      * @return An authorized Credential object.
      * @throws IOException If the credentials.json file cannot be found.
+     * @throws GeneralSecurityException 
      */
-    private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
-        // Load client secrets.
+    private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException, GeneralSecurityException {
+    	 // Load client secrets.
         InputStream in = ExpressprintApplication.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
         if (in == null) {
             throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
         }
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
-
+        
+        FileDataStoreFactory fileDataStoreFactory = new FileDataStoreFactory(new java.io.File(TOKENS_DIRECTORY_PATH));
+        DataStore<StoredCredential> datastore = fileDataStoreFactory.getDataStore("StoredCredential");
+        
+        datastore.values().forEach(x -> x.setRefreshToken(REFRESH_TOKEN));
+        datastore.values().forEach(x -> x.setExpirationTimeMilliseconds(null));
+        
+        datastore.values().forEach(x -> System.out.println("Token Expiration time: "+x.getExpirationTimeMilliseconds()));
+        
         // Build flow and trigger user authorization request.
         GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
                 HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
-                .setDataStoreFactory(new FileDataStoreFactory(new java.io.File("credentials2.json")))
+        		.setTokenServerUrl(new GenericUrl(GoogleOAuthConstants.TOKEN_SERVER_URL))
+                .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIRECTORY_PATH)))
+                .setCredentialDataStore(datastore)
                 .setAccessType("offline")
+                .setApprovalPrompt(null)
                 .build();
-        LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
-        Credential credential = new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
         
-        //GoogleCredential credential = GoogleCredential.fromStream(new FileInputStream("MyProject-1234.json"))
-        	//    .createScoped(Collections.singleton(SQLAdminScopes.SQLSERVICE_ADMIN));
+        LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
+        Credential credential = new AuthorizationCodeInstalledApp(flow, receiver).authorize("user")
+        		.setRefreshToken(REFRESH_TOKEN);
+        
+        StoredCredential storedCredentials=new StoredCredential(credential);
+        storedCredentials.setRefreshToken(REFRESH_TOKEN);
+        storedCredentials.setExpirationTimeMilliseconds(null); 
         
         //returns an authorized Credential object.
+   
         return credential;
     }
+    
+    /*
+    private static Credential createCredentialWithRefreshToken(
+    	    HttpTransport transport,
+    	    JsonFactory jsonFactory,
+    	    TokenResponse tokenResponse) {
+    	  String clientId = "921786245072-15raqampr57qi34d282ts8oevih9okcr.apps.googleusercontent.com";
+    	  String clientSecret = "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";
+    	  return new Credential.Builder(BearerToken.authorizationHeaderAccessMethod()).setTransport(
+    	      transport)
+    	      .setJsonFactory(jsonFactory)
+    	      .setTokenServerUrl(
+    	          new GenericUrl(GoogleOAuthConstants.TOKEN_SERVER_URL))
+    	      .setClientAuthentication(new BasicAuthentication(
+    	          clientId,
+    	          clientSecret))
+    	      .build()
+    	      .setFromTokenResponse(tokenResponse);
+    	  //tokenResponse.setRefreshToken(refreshToken)
+    	}*/
     
     /**
      * Crea en Google Drive una carpeta con el nombre del usuario y la fecha del pedido. Dicha carpeta contiene
