@@ -80,7 +80,7 @@ public class GoogleDriveService {
      * @throws GeneralSecurityException 
      */
     private static Credential getCredentials() throws IOException, GeneralSecurityException {
-		GoogleCredential credential = GoogleCredential.fromStream(ExpressprintApplication.class.getResourceAsStream("expressprint.json")).createScoped(Collections.singletonList(DriveScopes.DRIVE));
+		GoogleCredential credential = GoogleCredential.fromStream(ExpressprintApplication.class.getResourceAsStream("expressprint.json")).createScoped(Collections.singletonList(DriveScopes.DRIVE)).createDelegated("backendexpressprint@gmail.com");
         return credential;
     }
     
