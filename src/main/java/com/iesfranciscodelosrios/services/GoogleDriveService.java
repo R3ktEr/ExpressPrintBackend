@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import org.springframework.stereotype.Service;
 
 import com.google.api.client.auth.oauth2.Credential;
@@ -109,10 +110,10 @@ public class GoogleDriveService {
                 .setAccessType("offline")
                 .setApprovalPrompt(null)
                 .build();
-        
-        LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(45766).build();
+		GoogleCredential credential = GoogleCredential.fromStream(ExpressprintApplication.class.getResourceAsStream("expressprint.json"));
+        /*LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
         Credential credential = new AuthorizationCodeInstalledApp(flow, receiver).authorize("user")
-        		.setRefreshToken(REFRESH_TOKEN);
+        		.setRefreshToken(REFRESH_TOKEN);*/
         
         StoredCredential storedCredentials=new StoredCredential(credential);
         storedCredentials.setRefreshToken(REFRESH_TOKEN);
