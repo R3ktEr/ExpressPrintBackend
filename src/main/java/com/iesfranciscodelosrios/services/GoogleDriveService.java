@@ -110,7 +110,7 @@ public class GoogleDriveService {
                 .setApprovalPrompt(null)
                 .build();
         
-        LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
+        LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8080).build();
         Credential credential = new AuthorizationCodeInstalledApp(flow, receiver).authorize("user")
         		.setRefreshToken(REFRESH_TOKEN);
         
