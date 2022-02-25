@@ -39,6 +39,9 @@ public class Discount implements Serializable {
     //"Es fijo el descuento?"
     @Column(name="is_fixed", nullable = false)
     private boolean isFixed;
+    @ApiModelProperty(value = "Si el descuento esta actualmente vigente o no",name="isActive",required=false,example="false")
+    @Column(name="is_active")
+    private boolean isActive;
     
     @JsonIgnoreProperties("discounts")
     @OnDelete(action = OnDeleteAction.NO_ACTION)
@@ -50,12 +53,13 @@ public class Discount implements Serializable {
         this.id = -1L;
     }
 
-    public Discount(String name, Integer percentage, Integer fixedValue, boolean isFixed) {
+    public Discount(String name, Integer percentage, Integer fixedValue, boolean isFixed, boolean isActive) {
         this.id = -1L;
         this.name = name;
         this.percentage = percentage;
         this.fixedValue = fixedValue;
         this.isFixed = isFixed;
+        this.isActive = isActive;
     }
 
     public Long getId() {
@@ -98,7 +102,15 @@ public class Discount implements Serializable {
         isFixed = fixed;
     }
 
-    public List<Order> getOrders() {
+    public boolean isActive() {
+		return isActive;
+	}
+
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
+	}
+
+	public List<Order> getOrders() {
 		return orders;
 	}
 
@@ -113,10 +125,4 @@ public class Discount implements Serializable {
         Discount discount = (Discount) o;
         return Objects.equals(id, discount.id);
     }
-
-	@Override
-	public String toString() {
-		return "Discount [id=" + id + ", name=" + name + ", percentage=" + percentage + ", fixedValue=" + fixedValue
-				+ ", isFixed=" + isFixed + ", orders=" + orders + "]";
-	}
 }

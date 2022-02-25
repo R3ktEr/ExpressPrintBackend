@@ -61,7 +61,7 @@ public class Order implements Serializable {
     private List<Discount> discounts;
     
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = Document.class)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = Document.class, orphanRemoval = true)
     private List<Document> documents;
 
     public Order() {

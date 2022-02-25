@@ -19,6 +19,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 @ApiOperation(value = "Find all user", notes = "Return all the user whithout paging")
+@CrossOrigin(methods = {RequestMethod.GET,RequestMethod.PUT,RequestMethod.POST,RequestMethod.DELETE})
 @ApiResponses(value = { @ApiResponse(code = 200, message = "succeful operation", response = List.class) })
 
 @RestController

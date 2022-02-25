@@ -15,6 +15,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
+@CrossOrigin(methods = {RequestMethod.GET,RequestMethod.PUT,RequestMethod.POST})
 @RequestMapping("/prices")
 public class PriceController {
 

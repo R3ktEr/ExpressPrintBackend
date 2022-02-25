@@ -57,7 +57,7 @@ public class Document implements Serializable{
 	private boolean ringedPosition; //Layout of the ringed. True vertical, false horizontal
 	
 	@JsonIgnoreProperties({"documents","user"})
-	@OnDelete(action = OnDeleteAction.NO_ACTION)
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	@ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER, targetEntity = Order.class)
 	private Order order;
 	

@@ -5,6 +5,7 @@ import com.iesfranciscodelosrios.model.Order;
 import com.iesfranciscodelosrios.model.User;
 import com.iesfranciscodelosrios.repositories.OrderRepository;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class OrderService {
@@ -24,6 +26,10 @@ public class OrderService {
     UserService userService;
     @Autowired
     DocumentService documentService;
+    @Autowired
+    FileService fileUploadService;
+    @Autowired
+    GoogleDriveService googleDriveService;
     
     private static final Logger logger = LogManager.getLogger(OrderService.class);
 
@@ -38,8 +44,8 @@ public class OrderService {
 		if(order.isPresent()) {
 			return order.get();
 		}else {
-			logger.info("El pedido con id "+id+"no existe");
-			throw new Exception("El pedido con id "+id+"no existe");
+			logger.info("El pedido con id "+id+" no existe");
+			throw new Exception("El pedido con id "+id+" no existe");
 		}
 	}
 	
@@ -72,7 +78,9 @@ public class OrderService {
 				if(u1.getMail().equals(u2.getMail())) {
 					List<Document> orderdocuments = order.getDocuments();
 					order.setDocuments(new ArrayList<>());
+					order.setDiscounts(discountService.getAllDiscounts());
 					order = orderRepository.save(order);
+
 					try {
 						documentService.saveDocuments(orderdocuments, order);
 					}catch(Exception e) {
@@ -90,6 +98,20 @@ public class OrderService {
 		}else {
 			logger.info("El pedido que intenta crear ya existe en la base de datos");
 			throw new Exception("El pedido que intenta crear ya existe en la base de datos");
+		}
+	}
+	
+	public boolean uploadOrderFiles(List<MultipartFile> multipartFiles, String userName) throws Exception {
+		try {
+			List<File> fileList=fileUploadService.uploadToLocal(multipartFiles);
+			
+			googleDriveService.createOrderFolder("Pedido de "+userName, fileList);
+			
+			fileUploadService.flushTmp();
+			
+			return true;
+		}catch(Exception e) {
+			throw e;
 		}
 	}
 	

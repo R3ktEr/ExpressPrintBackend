@@ -25,6 +25,10 @@ public class User implements Serializable{
 	@Column(name="id")
 	private Long id;
 	
+	@ApiModelProperty(value = "Id del usuario de google",name="google_id",required=false,example="11341513")
+	@Column(name="google_id")
+	private Long googleId;
+	
 	@ApiModelProperty(value = "Correo del usuario",name="mail",required=true,example="CorreoFalso@gmail.com")
 	@Column(name="mail", unique = true)
 	private String mail;
@@ -56,6 +60,7 @@ public class User implements Serializable{
 	public User(String mail, String name, int phoneNumber, boolean admin, boolean isDisabled) {
 		super();
 		this.id = -1L;
+		this.googleId = -1L;
 		this.mail = mail;
 		this.name = name;
 		this.phoneNumber = phoneNumber;
@@ -66,6 +71,7 @@ public class User implements Serializable{
 	public User(String mail, String name, int phoneNumber, boolean admin, boolean isDisabled, List<Order> userOrders) {
 		super();
 		this.id = -1L;
+		this.googleId = -1L;
 		this.mail = mail;
 		this.name = name;
 		this.phoneNumber = phoneNumber;
@@ -105,6 +111,14 @@ public class User implements Serializable{
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Long getGoogleId() {
+		return googleId;
+	}
+
+	public void setGoogleId(Long googleId) {
+		this.googleId = googleId;
 	}
 
 	public String getMail() {
