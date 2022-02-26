@@ -1,14 +1,17 @@
 package com.iesfranciscodelosrios.services;
 
 import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.auth.oauth2.TokenResponse;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
+import com.google.api.client.googleapis.auth.oauth2.GoogleRefreshTokenRequest;
 import com.google.api.client.googleapis.batch.BatchRequest;
 import com.google.api.client.googleapis.batch.json.JsonBatchCallback;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.googleapis.json.GoogleJsonError;
 import com.google.api.client.http.FileContent;
 import com.google.api.client.http.HttpHeaders;
+import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
@@ -24,10 +27,7 @@ import java.nio.file.Files;
 import java.security.GeneralSecurityException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class GoogleDriveService {
@@ -64,12 +64,28 @@ public class GoogleDriveService {
     private static Credential getCredentials() throws IOException, GeneralSecurityException {
         GoogleClientSecrets secrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(ExpressprintApplication.class.getResourceAsStream("credentials.json")));
         GoogleCredential credential = GoogleCredential.fromStream(ExpressprintApplication.class.getResourceAsStream("expressprint.json"));
-        return credential.createScoped(Collections.singletonList(DriveScopes.DRIVE))
+        credential.createScoped(Collections.singletonList(DriveScopes.DRIVE))
                 .toBuilder()
                 .setServiceAccountUser(Credentials.USERMAIL)
                 .setClientSecrets(secrets)
                 .build().setAccessToken(Credentials.ACCESSTOKEN)
                 .setRefreshToken(Credentials.REFRESTOKEN);
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    TokenResponse tokenResponse = new GoogleRefreshTokenRequest
+                            (new NetHttpTransport(), JSON_FACTORY, Credentials.REFRESTOKEN
+                                    , secrets.getDetails().getClientId()
+                                    , secrets.getDetails().getClientSecret())
+                            .setScopes(Collections.singletonList(DriveScopes.DRIVE)).setGrantType("refresh_token").execute();
+                    credential.setAccessToken(tokenResponse.getAccessToken());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, 0, 1800000);
+        return credential;
     }
 
     /**
