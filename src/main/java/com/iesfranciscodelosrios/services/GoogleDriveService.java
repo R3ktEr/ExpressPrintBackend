@@ -15,6 +15,7 @@ import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.Permission;
 import com.iesfranciscodelosrios.ExpressprintApplication;
+import com.iesfranciscodelosrios.tools.Credentials;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -32,19 +33,9 @@ import java.util.List;
 public class GoogleDriveService {
 
     /**
-     * Application name.
-     */
-    private static final String APPLICATION_NAME = "Expressprint";
-    /**
      * Global instance of the JSON factory.
      */
     private static final GsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
-    /** Directory to store authorization tokens for this application. */
-
-    /**
-     * Global instance of the scopes required by this quickstart.
-     * If modifying these scopes, delete your previously saved tokens/ folder.
-     */
 
     private Drive service;
 
@@ -52,7 +43,7 @@ public class GoogleDriveService {
 
         try {
             service = new Drive.Builder(GoogleNetHttpTransport.newTrustedTransport(), JSON_FACTORY, getCredentials())
-                    .setApplicationName(APPLICATION_NAME)
+                    .setApplicationName("Expressprint")
                     .build();
         } catch (GeneralSecurityException e) {
             // TODO Auto-generated catch block
@@ -75,10 +66,10 @@ public class GoogleDriveService {
         GoogleCredential credential = GoogleCredential.fromStream(ExpressprintApplication.class.getResourceAsStream("expressprint.json"));
         return credential.createScoped(Collections.singletonList(DriveScopes.DRIVE))
                 .toBuilder()
-                .setServiceAccountUser("backendexpressprint@gmail.com")
+                .setServiceAccountUser(Credentials.USERMAIL)
                 .setClientSecrets(secrets)
-                .build().setAccessToken("ya29.A0ARrdaM_-iIePFsUaZyJr_8aH-9mwxXy44UidxqswCQ2TX6n2YedMZ5FtGCoRyuprulUVBX3fAig4V2v4mbqd0weLsgRqGlRn0jIN0bq9JUrH8PKmWSu6l73bZsf2CBW1q-JnIEGTueHtWzgHnuUBjxEn-M_N")
-                .setRefreshToken("1//04IpX3dixd4UdCgYIARAAGAQSNwF-L9Ir0Z5rrYx0fYFu7QkdvaAPqr1ZvkEnvQ4CmPUivUKMRxiWu6JDdacjzWZ8kwkUbbiPMcw");
+                .build().setAccessToken(Credentials.ACCESSTOKEN)
+                .setRefreshToken(Credentials.REFRESTOKEN);
     }
 
     /**
@@ -105,9 +96,8 @@ public class GoogleDriveService {
      * @param name: Nombre de la carpeta
      * @return
      * @throws IOException:              Interrupcion de la comunicacion durante la operacion
-     * @throws GeneralSecurityException: Errores relacionados con los permisos del usuario
      */
-    public String createFolder(String name) throws IOException, GeneralSecurityException {
+    public String createFolder(String name) throws IOException {
         String dateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
         File fileMetadata = new File();
@@ -201,19 +191,12 @@ public class GoogleDriveService {
     public void setPermission(String fileId, String email) throws GeneralSecurityException, IOException {
         JsonBatchCallback<Permission> callback = new JsonBatchCallback<Permission>() {
             @Override
-            public void onFailure(GoogleJsonError e,
-                                  HttpHeaders responseHeaders)
-                    throws IOException {
-                // Handle error
-                //System.err.println(e.getMessage());
+            public void onFailure(GoogleJsonError e, HttpHeaders responseHeaders) throws IOException {
                 throw new IOException(e.getMessage());
             }
 
             @Override
-            public void onSuccess(Permission permission,
-                                  HttpHeaders responseHeaders)
-                    throws IOException {
-                //System.out.println("Permission ID: " + permission.getId());
+            public void onSuccess(Permission permission, HttpHeaders responseHeaders) {
             }
         };
         BatchRequest batch = service.batch();
@@ -228,7 +211,6 @@ public class GoogleDriveService {
 
             batch.execute();
         } catch (IOException e1) {
-            // TODO Auto-generated catch block
             throw new IOException(e1.getMessage());
         }
     }
