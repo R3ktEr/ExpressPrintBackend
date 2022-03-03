@@ -77,7 +77,7 @@ public class UserService {
 			return user.get();
 		}else{
 			logger.info("Usuario con correo: "+mail+" no encontrado");
-			throw new Exception("Usuario no encontrado") ;
+			return new User();
 		}
 	
 	}
