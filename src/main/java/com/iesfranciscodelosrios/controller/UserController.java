@@ -19,7 +19,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 @ApiOperation(value = "Find all user", notes = "Return all the user whithout paging")
-@CrossOrigin(methods = {RequestMethod.GET,RequestMethod.PUT,RequestMethod.POST,RequestMethod.DELETE})
+@CrossOrigin(methods = {RequestMethod.GET,RequestMethod.PUT,RequestMethod.POST,RequestMethod.DELETE},allowedHeaders = "*")
 @ApiResponses(value = { @ApiResponse(code = 200, message = "succeful operation", response = List.class) })
 
 @RestController
@@ -98,11 +98,16 @@ public class UserController {
 		HttpStatus httpStatus;
 		try {
 			user = service.findUserByMail(mail);
-			httpStatus = HttpStatus.OK;
+			
+			if(user.getId()!=-1L) {
+				httpStatus = HttpStatus.OK;				
+			}else {
+				httpStatus = HttpStatus.NOT_FOUND;
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			user = new User();
-			httpStatus = HttpStatus.NOT_FOUND;
+			httpStatus = HttpStatus.BAD_REQUEST;
 		}
 		return new ResponseEntity<>(user, new HttpHeaders(), httpStatus);
 	}

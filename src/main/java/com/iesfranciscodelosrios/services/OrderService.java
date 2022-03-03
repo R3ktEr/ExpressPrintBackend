@@ -9,6 +9,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
@@ -102,16 +103,17 @@ public class OrderService {
 		}
 	}
 	
-	public boolean uploadOrderFiles(List<MultipartFile> multipartFiles, String userName) throws Exception {
+	public Map<String, List<String>> uploadOrderFiles(List<MultipartFile> multipartFiles, String userName, String userMail) throws Exception {
 		try {
 			List<File> fileList=fileUploadService.uploadToLocal(multipartFiles);
 			
-			LinkedHashMap<String, List<String>> hola= googleDriveService.createOrderFolder("Pedido de "+userName, fileList);
+			LinkedHashMap<String, List<String>> webLinks= googleDriveService.createOrderFolder("Pedido de "+userName, fileList, userMail);
 			
 			fileUploadService.flushTmp();
 
-			return true;
+			return webLinks;
 		}catch(Exception e) {
+			logger.info("Error al subir los archivos a google drive");
 			throw e;
 		}
 	}

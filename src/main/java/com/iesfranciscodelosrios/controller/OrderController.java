@@ -1,7 +1,9 @@
 package com.iesfranciscodelosrios.controller;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -125,18 +127,20 @@ public class OrderController {
 		@ApiResponse(code=400, message="Bad Request")
 	})
 	@PostMapping("/upload")
-	public HttpStatus createOrder(@RequestParam("files") List<MultipartFile> files, 
-			@RequestParam("user") String userName){
+	public ResponseEntity<Map<String, List<String>>> createOrder(@RequestParam("files") List<MultipartFile> files, 
+			@RequestParam("user") String userName, @RequestParam("mail") String userMail){
 		HttpStatus httpstatus;
+		Map<String, List<String>> response=new LinkedHashMap<String, List<String>>();
 		
 		try {
-			orderService.uploadOrderFiles(files, userName);
+			response=orderService.uploadOrderFiles(files, userName, userMail);
 			httpstatus=HttpStatus.OK;
 		} catch (Exception e) {
 			httpstatus=HttpStatus.BAD_REQUEST;
 			e.printStackTrace();
 		}
-		return httpstatus;
+		
+		return new ResponseEntity<Map<String, List<String>>>(response, new HttpHeaders(), httpstatus);
 	}
 	
 	@ApiOperation(value="Update order",notes="Returns the updated order")

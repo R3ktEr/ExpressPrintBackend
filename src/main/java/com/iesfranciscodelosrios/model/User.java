@@ -27,7 +27,7 @@ public class User implements Serializable{
 	
 	@ApiModelProperty(value = "Id del usuario de google",name="google_id",required=false,example="11341513")
 	@Column(name="google_id")
-	private Long googleId;
+	private String googleId;
 	
 	@ApiModelProperty(value = "Correo del usuario",name="mail",required=true,example="CorreoFalso@gmail.com")
 	@Column(name="mail", unique = true)
@@ -57,10 +57,10 @@ public class User implements Serializable{
 		this.id=-1L;
 	}
 
-	public User(String mail, String name, int phoneNumber, boolean admin, boolean isDisabled) {
+	public User(String mail, String googleId, String name, int phoneNumber, boolean admin, boolean isDisabled) {
 		super();
 		this.id = -1L;
-		this.googleId = -1L;
+		this.googleId = googleId;
 		this.mail = mail;
 		this.name = name;
 		this.phoneNumber = phoneNumber;
@@ -68,10 +68,10 @@ public class User implements Serializable{
 		this.isDisabled = isDisabled;
 	}
 
-	public User(String mail, String name, int phoneNumber, boolean admin, boolean isDisabled, List<Order> userOrders) {
+	public User(String mail, String googleId, String name, int phoneNumber, boolean admin, boolean isDisabled, List<Order> userOrders) {
 		super();
 		this.id = -1L;
-		this.googleId = -1L;
+		this.googleId = googleId;
 		this.mail = mail;
 		this.name = name;
 		this.phoneNumber = phoneNumber;
@@ -113,11 +113,11 @@ public class User implements Serializable{
 		this.id = id;
 	}
 
-	public Long getGoogleId() {
+	public String getGoogleId() {
 		return googleId;
 	}
 
-	public void setGoogleId(Long googleId) {
+	public void setGoogleId(String googleId) {
 		this.googleId = googleId;
 	}
 

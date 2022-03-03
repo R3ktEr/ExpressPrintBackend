@@ -26,6 +26,7 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.security.GeneralSecurityException;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -99,8 +100,8 @@ public class GoogleDriveService {
      * @throws IOException:              Interrupcion de la comunicacion durante la operacion
      * @throws GeneralSecurityException: Errores relacionados con los permisos del usuario
      */
-    public LinkedHashMap<String, List<String>> createOrderFolder(String orderName, List<java.io.File> fileList) throws IOException, GeneralSecurityException {
-        String folderId = createFolder(orderName);
+    public LinkedHashMap<String, List<String>> createOrderFolder(String orderName, List<java.io.File> fileList, String userMail) throws IOException, GeneralSecurityException {
+        String folderId = createFolder(orderName, userMail);
         LinkedHashMap<String, List<String>> webLinks = populateFolder(fileList, folderId);
 
         return webLinks;
@@ -112,9 +113,10 @@ public class GoogleDriveService {
      * @param name: Nombre de la carpeta
      * @return
      * @throws IOException:              Interrupcion de la comunicacion durante la operacion
+     * @throws GeneralSecurityException 
      */
-    public String createFolder(String name) throws IOException {
-        String dateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+    public String createFolder(String name, String userMail) throws IOException, GeneralSecurityException {
+        String dateTime = LocalDateTime.now().atZone(ZoneId.of("Europe/Paris")).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
         File fileMetadata = new File();
         fileMetadata.setName(name + " " + dateTime);
@@ -124,7 +126,8 @@ public class GoogleDriveService {
         File file = service.files().create(fileMetadata)
                 .setFields("id")
                 .execute();
-
+        
+        setPermission(file.getId(), userMail);
 
         return file.getId();
     }
@@ -189,8 +192,8 @@ public class GoogleDriveService {
         String mimeType = Files.probeContentType(file.toPath());
 
         FileContent mediaContent = new FileContent(mimeType, file);
-        @SuppressWarnings("unused")
-        File gfile = service.files().create(fileMetadata, mediaContent)
+        
+        service.files().create(fileMetadata, mediaContent)
                 .setFields("id, name, webViewLink")
                 .execute();
     }
