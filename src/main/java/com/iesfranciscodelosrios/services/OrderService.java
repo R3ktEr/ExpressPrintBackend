@@ -36,7 +36,7 @@ public class OrderService {
     private static final Logger logger = LogManager.getLogger(OrderService.class);
 
     public List<Order> getAllOrder() {
-		List<Order> orders=orderRepository.findAll();
+		List<Order> orders=orderRepository.getAllOrders();
 		
 		return orders;
 	}
