@@ -42,7 +42,7 @@ public class Document implements Serializable{
 	private Thickness thickness; //Thickness of the paper
 	@ApiModelProperty(value = "Indica si la copia se hace solo por delante o por delante y por atras",name="isTwoSides",dataType = "boolean",required=false,example="false")
 	@Column(name="impressionType")
-	private boolean isTwoSides; //One or two sides
+	private boolean isTwoSides; //One false or two true (Sides)
 	@ApiModelProperty(value = "Indica el acabado de las copias (grapado, encuadernado...)",name="finishType",dataType = "Ended",required=false)
 	@OneToOne(fetch = FetchType.EAGER, targetEntity = Ended.class)
 	private Ended finishType; //How the sheets will be arranged. Saddle (grapado) stitched (encuadernado)
@@ -54,7 +54,7 @@ public class Document implements Serializable{
 	private boolean isVertical; //Layout of the sheet. No price. True vertical, false horizontal
 	@ApiModelProperty(value = "Indica la disposicion del anillado",name="ringedPosition",dataType = "boolean",required=false, example="false")
 	@Column(name="ringedPosition") 
-	private boolean ringedPosition; //Layout of the ringed. True vertical, false horizontal
+	private boolean ringedPosition; //Layout of the ringed. True long side, false short side
 	
 	@JsonIgnoreProperties({"documents","user"})
 	@OnDelete(action = OnDeleteAction.CASCADE)

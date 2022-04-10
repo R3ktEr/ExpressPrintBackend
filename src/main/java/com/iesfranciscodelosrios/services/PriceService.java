@@ -155,7 +155,7 @@ public class PriceService {
                         result.add(changePriceService.changeCopyPrice((float) ((Double) copymap.get("price")).doubleValue()));
                         LOGGER.info("Se ha modificado el precio de la copia a " + (float) ((Double) copymap.get("price")).doubleValue());
                     }
-                    case "Ended" -> {
+                    case "Endeds" -> {
                         List<Object> endedList = (List<Object>) value;
                         for (Object ended : endedList) {
                             LinkedHashMap<String, Object> endedmap = (LinkedHashMap<String, Object>) ended;
@@ -172,7 +172,7 @@ public class PriceService {
 
                         }
                     }
-                    case "Size" -> {
+                    case "Sizes" -> {
                         List<Object> sizeList = (List<Object>) value;
                         for (Object size : sizeList) {
                             LinkedHashMap<String, Object> sizemap = (LinkedHashMap<String, Object>) size;
