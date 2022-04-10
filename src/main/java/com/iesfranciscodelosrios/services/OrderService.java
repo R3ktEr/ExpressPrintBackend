@@ -36,7 +36,7 @@ public class OrderService {
     private static final Logger logger = LogManager.getLogger(OrderService.class);
 
     public List<Order> getAllOrder() {
-		List<Order> orders=orderRepository.findAll();
+		List<Order> orders=orderRepository.getAllOrders();
 		
 		return orders;
 	}
@@ -57,7 +57,7 @@ public class OrderService {
 			return orders;
 		}else {
 			logger.info("El usuario no tiene pedidos");
-			throw new Exception("El usuario no tiene pedidos");
+			return new ArrayList<Order>();
 		}
 	}
 	
@@ -78,16 +78,21 @@ public class OrderService {
 				User u2=userService.findUserByMail(u1.getMail());
 				
 				if(u1.getMail().equals(u2.getMail())) {
-					List<Document> orderdocuments = order.getDocuments();
-					order.setDocuments(new ArrayList<>());
-					order.setDiscounts(discountService.getAllDiscounts());
-					order = orderRepository.save(order);
-
 					try {
-						documentService.saveDocuments(orderdocuments, order);
+						List<Document> orderdocuments = order.getDocuments();
+						order.setUser(u2);
+						order.setDocuments(new ArrayList<>());
+						order.setDiscounts(discountService.getAllDiscounts());
+						order = orderRepository.save(order);						
+						try {
+							documentService.saveDocuments(orderdocuments, order);
+						}catch(Exception e) {
+							throw e;
+						}
 					}catch(Exception e) {
-						throw e;
+						e.printStackTrace();
 					}
+
 					return order;
 				}else {
 					logger.info("El correo del usuario del pedido no concuerda con el correo del usuario de la base de datos");

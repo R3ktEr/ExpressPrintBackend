@@ -8,6 +8,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -90,12 +92,16 @@ public class OrderController {
 		try {
 			orders = orderService.getOrdersByUser(id_u); 
 			
-			httpstatus=HttpStatus.OK;
+			if(orders.isEmpty()) {
+				httpstatus=HttpStatus.NOT_FOUND;
+			}else {
+				httpstatus=HttpStatus.OK;				
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			
 			orders=new ArrayList<Order>();
-			httpstatus=HttpStatus.NOT_FOUND;
+			httpstatus=HttpStatus.BAD_REQUEST;
 		}
 		
 		return new ResponseEntity<List<Order>>(orders, new HttpHeaders(), httpstatus);
@@ -126,14 +132,14 @@ public class OrderController {
 		@ApiResponse(code=200, message="Successfull operation",response=List.class),
 		@ApiResponse(code=400, message="Bad Request")
 	})
-	@PostMapping("/upload")
-	public ResponseEntity<Map<String, List<String>>> createOrder(@RequestParam("files") List<MultipartFile> files, 
-			@RequestParam("user") String userName, @RequestParam("mail") String userMail){
+	@RequestMapping(value="/upload", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, method = RequestMethod.POST)
+	public ResponseEntity<Map<String, List<String>>> createOrder(@RequestPart("files") List<MultipartFile> files, 
+			@RequestPart("user") String user, @RequestPart("mail") String mail){
 		HttpStatus httpstatus;
 		Map<String, List<String>> response=new LinkedHashMap<String, List<String>>();
 		
 		try {
-			response=orderService.uploadOrderFiles(files, userName, userMail);
+			response=orderService.uploadOrderFiles(files, user, mail);
 			httpstatus=HttpStatus.OK;
 		} catch (Exception e) {
 			httpstatus=HttpStatus.BAD_REQUEST;
