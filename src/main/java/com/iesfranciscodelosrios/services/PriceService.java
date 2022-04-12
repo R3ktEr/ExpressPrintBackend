@@ -151,9 +151,12 @@ public class PriceService {
                         }
                     }
                     case "Copy" -> {
-                        LinkedHashMap<String, Object> copymap = (LinkedHashMap<String, Object>) value;
-                        result.add(changePriceService.changeCopyPrice((float) ((Double) copymap.get("price")).doubleValue()));
-                        LOGGER.info("Se ha modificado el precio de la copia a " + (float) ((Double) copymap.get("price")).doubleValue());
+                        List<Object> copyList = (List<Object>) value;
+                        for (Object copy : copyList) {
+                            LinkedHashMap<String, Object> copymap = (LinkedHashMap<String, Object>) copy;
+                            result.add(changePriceService.changeCopyPrice( (float) ((Double) copymap.get("price")).doubleValue()));
+                            LOGGER.info("Se ha modificado el precio de la copia a " + (float) ((Double) copymap.get("price")).doubleValue());
+                        }
                     }
                     case "Endeds" -> {
                         List<Object> endedList = (List<Object>) value;
