@@ -34,6 +34,4 @@ build/
 ### VS Code ###
 tmp/
 .vscode/
-src/main/resources/com/iesfranciscodelosrios/
 express-print/
-src/main/resources/application.properties

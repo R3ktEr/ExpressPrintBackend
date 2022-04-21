@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "expressprint-5fcbd",
+  "private_key_id": "16e55dee325d2658fe6826dc7dae91f75e7f0767",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCl++COVw/y3sgB\nK4CQvFklgUo1M8DfiPm2/U28ifA7uNTkagS6w/RsXhvVDJla4vqzxOHOgD7+0a3l\n8pafzmsvnyGbGDgCiQY5kTAC09hYpyTEIe9ildX1svcPmqEpUh3rLmJuMTGYU7PK\n6EG2TBeZS7ulEIHLxUDSkJ3n3eosld5kdx13jrVLnoOIpmNnCHOFwvrXTvg8mQ6H\nj0cay2wNIbBm1gUQcTSqhgqwANm3Wo2jq3nl69I4MkcUgUXEMaflMkcHvYP3n0Tg\nu7rEhq9qEX1tjRceKZOfoltxDyjiKodkZrH1ug9QfTyjOKUiuEOaDn0hXpOJtrn/\njwIk2MabAgMBAAECggEADd2UofoJOF3+kdpzIE7GQ6khQdXTmYN1GMw1ijfGUbbc\nUe2+p2YR17D6MjnzNZxwb5lVePf4SzZziG9Taytwg3Hk+h0ee1e8UA1zgp5KcbLE\nvNL45GC6luPJr7atxSiO8e6Ar858OMqv4kC0pz3ZWtJGF+vhFodL0Es0ZazWuxKc\nm1WUss88hr+pWh1WV9+mXl6YZ3gvbz3wNFNHqt7np4nqbE6OWTZIa5F/14MPisSQ\nQu57X/5v7ceGrXDZfss0WBA/BYpt3nZtxXJYxUhhkM4Lgx0zGO7k404VI3Wk9bs8\nwMP/do9BFkLQe+S/EKJLtH5nWbflRYwAdDgcJdY7gQKBgQDmvBz/MjfPEwsAVnAH\nQAn7lDYyTgNQDIsM5J36iUIH6MDQ/CUVI3r8oQBQCEoDe7mnh4J9O8y+0EfKUX36\naXGF+oRxQORP1+PQgxDJcJSvd1YlaaKWlOZeoO2895x1wNLfui6SjV406Lbg3CXv\n+DG+6XqDqjlaXM5jIVb9OELBCQKBgQC4KK+oalCSJU1N3jqUBYt06zUuARm0jzIR\nvbbBPs460OI3CUIVWFuFIx6yIOhCseW2v9HHfaUgjRnJt1BIAR/AgFk1pXylDnKv\nCn2DHUZZDM+3elfxmQF4Oku6tUvmWNKdANj4IjcVoJQKSYJr18nmgffM8YHLcC8C\nsC4GxBLHgwKBgQDg2gz//HY6i/o6mAGQby3LR0IRf8jmp3KSW/BACKaago30muOg\nV/UwX82oMIvAHUBtLDdTx4TdpqdvWD8GWt9QizOqEmzsCh1uQ2uGgvnCjO8cgnb5\ne52MNhO4BS0p64EUmaFtG+rkcKxXMPKfiiUgQPMtgCNoFezi2cil97/F0QKBgEJt\nqq89akLNYc0s1ESAm4VZMp2dmAAhhxYPMNUUKp/cqTzhAg1hCeJEgNYQOLeWJB5/\notQq5l2PiDXTAgp3HVT69zL6trNzOrsZNZ0N+ko07NhqMT7cykLsBFUdAHvenloz\n7A/Vh7ktazkquvjbpeCYESLEGuWfWdXGZ1PZdkyxAoGBAMqKVUjkdLT096MaxFTW\nesPz2x/yOwYOvqz2zXVSUesJZjxOu+OwVSnlGgJG8b7iK6d3LT+wYlcv79OcU7yB\nGnHuQjmqcWNBXeJyLB48uvZ/VuAZdljjFAbzu7K8ht2DCeof2+HnBb/JlD56Nj4e\ncVawF+LyebYZAdYVU9l7IIgf\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-mov2n@expressprint-5fcbd.iam.gserviceaccount.com",
+  "client_id": "116807903777985304663",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-mov2n%40expressprint-5fcbd.iam.gserviceaccount.com"
+}
