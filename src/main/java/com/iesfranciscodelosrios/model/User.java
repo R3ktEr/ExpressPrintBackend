@@ -1,17 +1,15 @@
 package com.iesfranciscodelosrios.model;
 
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.List;
-
-import javax.persistence.*;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-import io.swagger.annotations.ApiModelProperty;
+import javax.persistence.*;
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Table(name="_User")
@@ -28,6 +26,12 @@ public class User implements Serializable{
 	@ApiModelProperty(value = "Id del usuario de google",name="google_id",required=false,example="11341513")
 	@Column(name="google_id")
 	private String googleId;
+
+	@ApiModelProperty(value = "Lista de tokens de android del usuario",name="androidTokens",required=false,example="Juan")
+	@Column(name="androidTokens")
+	@OneToMany(fetch = FetchType.LAZY)
+	@JsonIgnore
+	private List<AndroidToken> androidTokens;
 	
 	@ApiModelProperty(value = "Correo del usuario",name="mail",required=true,example="CorreoFalso@gmail.com")
 	@Column(name="mail", unique = true)
@@ -167,5 +171,13 @@ public class User implements Serializable{
 
 	public void setUserOrders(List<Order> userOrders) {
 		this.userOrders = userOrders;
+	}
+
+	public List<AndroidToken> getAndroidTokens() {
+		return androidTokens;
+	}
+
+	public void setAndroidTokens(List<AndroidToken> androidTokens) {
+		this.androidTokens = androidTokens;
 	}
 }

@@ -1,5 +1,6 @@
 package com.iesfranciscodelosrios.services;
 
+import com.iesfranciscodelosrios.model.AndroidToken;
 import com.iesfranciscodelosrios.model.User;
 import com.iesfranciscodelosrios.repositories.UserRepository;
 
@@ -18,6 +19,17 @@ public class UserService {
     UserRepository userRepository;
     
     private static final Logger logger= LogManager.getLogger(UserService.class);
+
+	public void addAndroidToken(User user, String token) {
+		if(user.getId()!=null && user.getId()>0) {
+			Optional<User> n = userRepository.findById(user.getId());
+			if (n.isPresent()) {
+				User newUser = n.get();
+				newUser.getAndroidTokens().add(new AndroidToken(token));
+				userRepository.save(newUser);
+			}
+		}
+	}
     
 	/**
 	 * 
@@ -59,9 +71,7 @@ public class UserService {
 			logger.info("No hay usuarios registrados");
 			throw new Exception("No hay usuarios registrados") ;
 		}
-		
-		
-		
+
 	}
 	
 	

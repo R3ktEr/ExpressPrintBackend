@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -110,5 +111,18 @@ public class UserController {
 			httpStatus = HttpStatus.BAD_REQUEST;
 		}
 		return new ResponseEntity<>(user, new HttpHeaders(), httpStatus);
+	}
+
+	@PutMapping("/addtoken")
+	public ResponseEntity<HttpStatus> addAndroidToken(@Valid @RequestBody LinkedHashMap<String, String> keyValue){
+		HttpStatus httpStatus;
+		try {
+			service.addAndroidToken(service.findUserByMail(keyValue.get("mail")), keyValue.get("token"));
+			httpStatus = HttpStatus.OK;
+		} catch (Exception e) {
+			e.printStackTrace();
+			httpStatus = HttpStatus.NOT_FOUND;
+		}
+		return new ResponseEntity<>(httpStatus);
 	}
 }

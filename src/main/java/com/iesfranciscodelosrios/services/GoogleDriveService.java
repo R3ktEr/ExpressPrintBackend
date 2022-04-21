@@ -11,12 +11,16 @@ import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.googleapis.json.GoogleJsonError;
 import com.google.api.client.http.FileContent;
 import com.google.api.client.http.HttpHeaders;
+import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.Permission;
+import com.google.auth.http.HttpCredentialsAdapter;
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.iesfranciscodelosrios.ExpressprintApplication;
 import com.iesfranciscodelosrios.tools.Credentials;
 import org.springframework.stereotype.Service;
@@ -43,6 +47,9 @@ public class GoogleDriveService {
     public GoogleDriveService() {
 
         try {
+            /*GoogleCredentials credentials = ServiceAccountCredentials.fromStream(ExpressprintApplication.class.getResourceAsStream("expressprint.json")).createScoped(Collections.singletonList(DriveScopes.DRIVE));
+            HttpRequestInitializer requestInitializer = new HttpCredentialsAdapter(credentials);
+            service = new Drive.Builder(GoogleNetHttpTransport.newTrustedTransport(), JSON_FACTORY, requestInitializer).build();*/
             service = new Drive.Builder(GoogleNetHttpTransport.newTrustedTransport(), JSON_FACTORY, getCredentials())
                     .setApplicationName("Expressprint")
                     .build();
@@ -115,7 +122,7 @@ public class GoogleDriveService {
      * @throws IOException:              Interrupcion de la comunicacion durante la operacion
      * @throws GeneralSecurityException 
      */
-    public String createFolder(String name, String userMail) throws IOException, GeneralSecurityException {
+    public String createFolder(String name, String userMail) throws IOException {
         String dateTime = LocalDateTime.now().atZone(ZoneId.of("Europe/Paris")).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
         File fileMetadata = new File();
@@ -152,7 +159,7 @@ public class GoogleDriveService {
      * @throws IOException:              Interrupcion de la comunicacion durante la operacion
      * @throws GeneralSecurityException: Errores relacionados con los permisos del usuario
      */
-    public LinkedHashMap<String, List<String>> populateFolder(List<java.io.File> fileList, String folderId) throws IOException, GeneralSecurityException {
+    public LinkedHashMap<String, List<String>> populateFolder(List<java.io.File> fileList, String folderId) throws IOException {
         LinkedHashMap<String, List<String>> webLinks = new LinkedHashMap<String, List<String>>();
         List<String> linksList = new ArrayList<String>();
 
@@ -185,7 +192,7 @@ public class GoogleDriveService {
      * @throws IOException:              Interrupcion de la comunicacion durante la operacion
      * @throws GeneralSecurityException: Errores relacionados con los permisos del usuario
      */
-    public void uploadFile(java.io.File file) throws IOException, GeneralSecurityException {
+    public void uploadFile(java.io.File file) throws IOException{
         File fileMetadata = new File();
         fileMetadata.setName(file.toPath().getFileName().toString());
 
@@ -207,8 +214,8 @@ public class GoogleDriveService {
      * @throws GeneralSecurityException: Errores relacionados con los permisos del usuario
      * @throws IOException:              Interrupcion de la comunicacion durante la operacion
      */
-    public void setPermission(String fileId, String email) throws GeneralSecurityException, IOException {
-        JsonBatchCallback<Permission> callback = new JsonBatchCallback<Permission>() {
+    public void setPermission(String fileId, String email) throws IOException {
+        JsonBatchCallback<Permission> callback = new JsonBatchCallback<>() {
             @Override
             public void onFailure(GoogleJsonError e, HttpHeaders responseHeaders) throws IOException {
                 throw new IOException(e.getMessage());
