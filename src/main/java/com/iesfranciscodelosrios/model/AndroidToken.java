@@ -2,6 +2,7 @@ package com.iesfranciscodelosrios.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.io.Serial;
@@ -14,6 +15,7 @@ public class AndroidToken implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @JsonIgnore
+    @Column(columnDefinition = "LONGTEXT")
     private String token;
 
     public AndroidToken() {

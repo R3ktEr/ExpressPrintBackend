@@ -1,6 +1,7 @@
 package com.iesfranciscodelosrios.services;
 
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingException;
 import com.iesfranciscodelosrios.model.AndroidToken;
 import com.iesfranciscodelosrios.model.Document;
 import com.iesfranciscodelosrios.model.Order;
@@ -156,7 +157,11 @@ public class OrderService {
                     }
                     if(body != null) {
                         for (AndroidToken at : updatedOrder.getUser().getAndroidTokens()) {
-                            notificationService.sendNotification(Map.of("orderid", o.get().getId()+""),"Tu pedido " + o.get().getId() + " ha actualizado su estado", "Ahora está: " + body, at.getToken());
+                            try{
+                                notificationService.sendNotification(Map.of("orderid", o.get().getId()+""),"Tu pedido " + o.get().getId() + " ha actualizado su estado", "Ahora está: " + body, at.getToken());
+                            }catch (FirebaseMessagingException e){
+                                System.out.println("El token enviado no es válido: " + at.getToken());
+                            }
                         }
                     }
                 }
