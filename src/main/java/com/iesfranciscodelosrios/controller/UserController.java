@@ -34,7 +34,7 @@ public class UserController {
 			@ApiResponse(code = 404, message = "Not Found", response = List.class) }
 	)
 	@RequestMapping(method = { RequestMethod.POST, RequestMethod.PUT })
-	public ResponseEntity<User> createOrUpdateUser(@Valid @RequestBody User U) {
+	public ResponseEntity<User> createOrUpdateUser(@RequestBody User U) {
 		User user;
 		HttpStatus httpStatus;
 		try {
