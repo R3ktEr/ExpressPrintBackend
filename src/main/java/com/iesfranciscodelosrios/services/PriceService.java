@@ -143,51 +143,52 @@ public class PriceService {
                 Object value = entry.getValue();
                 switch (key) {
                     case "Color" -> {
+                    	
                         List<Object> colorList = (List<Object>) value;
                         for (Object color : colorList) {
                             LinkedHashMap<String, Object> colormap = (LinkedHashMap<String, Object>) color;
-                            result.add(changePriceService.changeColorPrice((Boolean) colormap.get("isColor"), (float) ((Double) colormap.get("price")).doubleValue()));
-                            LOGGER.info("Se ha modificado el precio del " + ((Boolean) colormap.get("isColor") ? "Color" : "Blanco y Negro") + " a " + (float) ((Double) colormap.get("price")).doubleValue());
+                            result.add(changePriceService.changeColorPrice((Boolean) colormap.get("isColor"), (float) (Double.parseDouble(colormap.get("price").toString()))));
+                            LOGGER.info("Se ha modificado el precio del " + ((Boolean) colormap.get("isColor") ? "Color" : "Blanco y Negro") + " a " + (float) (Double.parseDouble(colormap.get("price").toString())));
                         }
                     }
                     case "Copy" -> {
                         List<Object> copyList = (List<Object>) value;
                         for (Object copy : copyList) {
                             LinkedHashMap<String, Object> copymap = (LinkedHashMap<String, Object>) copy;
-                            result.add(changePriceService.changeCopyPrice((float) ((Double) copymap.get("price")).doubleValue()));
-                            LOGGER.info("Se ha modificado el precio de la copia a " + (float) ((Double) copymap.get("price")).doubleValue());
+                            result.add(changePriceService.changeCopyPrice((float) (Double.parseDouble(copymap.get("price").toString()))));
+                            LOGGER.info("Se ha modificado el precio de la copia a " + (float) (Double.parseDouble(copymap.get("price").toString())));
                         }
                     }
                     case "Endeds" -> {
                         List<Object> endedList = (List<Object>) value;
                         for (Object ended : endedList) {
                             LinkedHashMap<String, Object> endedmap = (LinkedHashMap<String, Object>) ended;
-                            result.add(changePriceService.changeEndedPrice(Enums.EndedType.values()[Integer.valueOf(endedmap.get("endedType").toString())], (float) ((Double) endedmap.get("price")).doubleValue()));
-                            LOGGER.info("Se ha modificado el precio del acabado " + Enums.EndedType.values()[Integer.valueOf(endedmap.get("endedType").toString())] + " a " + (float) ((Double) endedmap.get("price")).doubleValue());
+                            result.add(changePriceService.changeEndedPrice(Enums.EndedType.values()[Integer.valueOf(endedmap.get("endedType").toString())], (float) (Double.parseDouble(endedmap.get("price").toString()))));
+                            LOGGER.info("Se ha modificado el precio del acabado " + Enums.EndedType.values()[Integer.valueOf(endedmap.get("endedType").toString())] + " a " + (float) (Double.parseDouble(endedmap.get("price").toString())));
                         }
                     }
                     case "ImpressionPerSide" -> {
                         List<Object> impressionList = (List<Object>) value;
                         for (Object impression : impressionList) {
                             LinkedHashMap<String, Object> impressionmap = (LinkedHashMap<String, Object>) impression;
-                            result.add(changePriceService.changeImpressionPrice(Enums.ImpressionsTypes.values()[Integer.valueOf(impressionmap.get("impressionsTypes").toString())], (float) ((Double) impressionmap.get("price")).doubleValue()));
-                            LOGGER.info("Se ha modificado el precio del tipo de impressión " + Enums.ImpressionsTypes.values()[Integer.valueOf(impressionmap.get("impressionsTypes").toString())] + " a " + (float) ((Double) impressionmap.get("price")).doubleValue());
+                            result.add(changePriceService.changeImpressionPrice(Enums.ImpressionsTypes.values()[Integer.valueOf(impressionmap.get("impressionsTypes").toString())], (float) (Double.parseDouble(impressionmap.get("price").toString()))));
+                            LOGGER.info("Se ha modificado el precio del tipo de impressión " + Enums.ImpressionsTypes.values()[Integer.valueOf(impressionmap.get("impressionsTypes").toString())] + " a " + (float) (Double.parseDouble(impressionmap.get("price").toString())));
                         }
                     }
                     case "Sizes" -> {
                         List<Object> sizeList = (List<Object>) value;
                         for (Object size : sizeList) {
                             LinkedHashMap<String, Object> sizemap = (LinkedHashMap<String, Object>) size;
-                            result.add(changePriceService.changeSizePrice(Enums.sheetSize.values()[Integer.valueOf(sizemap.get("sheetSize").toString())], sizemap.get("sizeOfSheet").toString(), (float) ((Double) sizemap.get("price")).doubleValue()));
-                            LOGGER.info("Se ha modificado un precio del tamaño " + Enums.sheetSize.values()[Integer.valueOf(sizemap.get("sheetSize").toString())] + " a " + (float) ((Double) sizemap.get("price")).doubleValue());
+                            result.add(changePriceService.changeSizePrice(Enums.sheetSize.values()[Integer.valueOf(sizemap.get("sheetSize").toString())], sizemap.get("sizeOfSheet").toString(), (float) (Double.parseDouble(sizemap.get("price").toString()))));
+                            LOGGER.info("Se ha modificado un precio del tamaño " + Enums.sheetSize.values()[Integer.valueOf(sizemap.get("sheetSize").toString())] + " a " + (float) (Double.parseDouble(sizemap.get("price").toString())));
                         }
                     }
                     case "Thickness" -> {
                         List<Object> thicknessList = (List<Object>) value;
                         for (Object thickness : thicknessList) {
                             LinkedHashMap<String, Object> thicknessmap = (LinkedHashMap<String, Object>) thickness;
-                            result.add(changePriceService.changeThicknessPrice(Enums.ThicknessType.values()[Integer.valueOf(thicknessmap.get("thicknessType").toString())], thicknessmap.get("description").toString(), (float) ((Double) thicknessmap.get("price")).doubleValue()));
-                            LOGGER.info("Se ha modificado un precio del grosor " + Enums.ThicknessType.values()[Integer.valueOf(thicknessmap.get("thicknessType").toString())] + " a " + (float) ((Double) thicknessmap.get("price")).doubleValue());
+                            result.add(changePriceService.changeThicknessPrice(Enums.ThicknessType.values()[Integer.valueOf(thicknessmap.get("thicknessType").toString())], thicknessmap.get("description").toString(), (float) (Double.parseDouble(thicknessmap.get("price").toString()))));
+                            LOGGER.info("Se ha modificado un precio del grosor " + Enums.ThicknessType.values()[Integer.valueOf(thicknessmap.get("thicknessType").toString())] + " a " + (float) (Double.parseDouble(thicknessmap.get("price").toString())));
                         }
                     }
                 }
